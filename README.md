@@ -1,6 +1,11 @@
 # CineFlex
-Proyecto del asignatra Sistema de web \n
-Contribuidores Jiahao,Jaime, Yikang y Javier\n
+Proyecto del asignatra Sistema de web 
 
-Foro de reviews\n
-Store de Peliculas\n
+Contribuidores Jiahao,Jaime, Yikang y Javier
+
+Foro de reviews
+
+
+Store de Peliculas
+
+
