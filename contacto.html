@@ -13,6 +13,34 @@
         <a href="miembros.html">Miembros</a>
         <a href="planificacion.html">Planificacion</a>
     </div>
-      
+    <h1>Contacto</h1>
+    <form name = "contacto" action="mailto:jiahji@ucm.com" method="post" enctype="text/plain">
+
+        <label for="nombre">Nombre:</label>
+        <input name="nombre"type="text" id="nombre"  required>
+
+        <label for="email">Email:</label>
+        <input name="email" type="email" id="email"  required>
+        <p></p>
+        <label>Motivo de la consulta:</label> <p></p>
+        <input name="motivo" type="radio" id="evaluacion" value="Evaluación" required>
+
+        <label for="evaluacion">Evaluación</label><p></p>
+        <input name="motivo" type="radio" id="sugerencias"  value="Sugerencias">
+
+        <label for="sugerencias">Sugerencias</label><p></p>
+        <input name="motivo" type="radio" id="criticas"  value="Críticas">
+
+        <label for="criticas">Críticas</label><p></p>
+        <input name="terminos"  type="checkbox" id="terminos" required>
+
+        <label for="terminos">Marque esta casilla para verificar que ha leído nuestros términos y condiciones del servicio</label><p></p>
+        <label for="consulta">Consulta:</label>
+
+        <textarea id="consulta" name="consulta" rows="4" cols="50" required></textarea>
+
+        <button type="submit">Enviar</button>
+
+    </form>
 </body>
 </html>
