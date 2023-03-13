@@ -12,9 +12,9 @@ define('INSTALADA', true);
 
 // Parámetros de configuración de la BD
 define('BD_HOST', 'localhost');
-define('BD_NAME', 'ejercicio02');
-define('BD_USER', 'ejercicio02');
-define('BD_PASS', 'ejercicio02');
+define('BD_NAME', 'practica2');
+define('BD_USER', 'practica2');
+define('BD_PASS', 'practica2');
 
 /* */
 /* Utilidades básicas de la aplicación */
