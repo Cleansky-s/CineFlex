@@ -6,10 +6,6 @@ class Pelicula {
     // Funciones de acceso a la BD
 
     /**
-     * Insertar pelicula
-     */
-
-    /**
      * Updatear pelicula
      */
 
@@ -23,6 +19,26 @@ class Pelicula {
     /**
      * Buscar por id
      */
+    public static function buscaPorId($idPelicula)
+    {
+        $conn = BD::getInstance()->getConexionBd();
+        $query = sprintf("SELECT * FROM peliculas WHERE id=%d", $idUsuario);
+        $rs = $conn->query($query);
+        $result = false;
+        if ($rs) {
+            // En el siguiente link se pueden encontrar los distintos 
+            // https://www.php.net/manual/en/class.mysqli-result.php
+            $fila = $rs->fetch_assoc();
+            if ($fila) {
+                // TODO __constructor
+                $result = new Pelicula();
+            }
+            $rs->free();
+        } else {
+            error_log("Error BD ({$conn->errno}): {$conn->error}");
+        }
+        return $result;
+    }
 
     /**
      * Buscar por titulo
@@ -46,8 +62,58 @@ class Pelicula {
      * Ordenar por valoracion media
      * (opcional, seria concatenar ORDER BY)
      */
+    
+
+    /**
+     * Insertar pelicula
+     */
+    private static function inserta($pelicula)
+    {
+        $result = false;
+        $conn = BD::getInstance()->getConexionBd();
+        $query=sprintf("INSERT INTO peliculas(idProveedor, titulo, descripcion, urlPortada, urlTrailer, urlPelicula, precioCompra, precioAlquiler, enSuscripcion, fechaCreacion, visible) VALUES (%d, '%s', '%s', '%s', '%s', '%s', %s , %s , %s , '%s', %s )"
+            , !is_null($pelicula->idProveedor) ? $pelicula->idProveedor : 'null'
+            , $conn->real_escape_string($pelicula->titulo)
+            , $conn->real_escape_string($pelicula->descripcion)
+            , $conn->real_escape_string($pelicula->urlPortada)
+            , $conn->real_escape_string($pelicula->urlTrailer)
+            , $conn->real_escape_string($pelicula->urlPelicula)
+            , !is_null($pelicula->precioCompra) ? $pelicula->precioCompra : 'DEFAULT'
+            , !is_null($pelicula->precioAlquiler) ? $pelicula->precioAlquiler : 'DEFAULT'
+            , ($pelicula->enSuscripcion) ? 'TRUE' : 'FALSE'
+            , $conn->real_escape_string($pelicula->fechaCreacion)
+            , ($pelicula->visible) ? 'TRUE' : 'FALSE'
+        );
+        if ( $conn->query($query) ) {
+            $pelicula->id = $conn->insert_id;
+            $result = self::insertaGeneros($pelicula);
+            // $result = self::insertaActores($pelicula);
+            // $result = self::insertaDirectores($pelicula);
+        } else {
+            error_log("Error BD ({$conn->errno}): {$conn->error}");
+        }
+        return $result;
+    }
+
+    private static function insertaGeneros($pelicula)
+    {
+        $conn = BD::getInstance()->getConexionBd();
+        foreach($pelicula->generos as $genero) {
+            $query = sprintf("INSERT INTO generospelicula(id, genero) VALUES (%d, '%s')"
+                , $pelicula->id
+                , $conn->real_escape_string($genero)
+            );
+            if ( ! $conn->query($query) ) {
+                error_log("Error BD ({$conn->errno}): {$conn->error}");
+                return false;
+            }
+        }
+        return $pelicula;
+    }
 
     // Datos del objeto
+
+    private const DATE_FORMAT = 'Y-m-d'
 
     private $id;
 
@@ -74,17 +140,19 @@ class Pelicula {
 
     private $urlPelicula;
 
-    private $enSuscripcion;
-
-    private $enCartelera;
-
     private $precioCompra;
 
     private $precioAlquiler;
+    
+    private $enSuscripcion;
 
     private $valoracionMedia; // No obligatorio, pero nos ahorramos usar MEAN() en la tabla valoraciones cada vez que hay que refrescar la pelicula
 
     private $valoracionCuenta;
+
+    private $fechaCreacion;
+
+    private $visible;
 
     private function __construct() {
 
@@ -113,5 +181,22 @@ class Pelicula {
         $this->idProveedor = $nuevoProveedor->id;
     }
 
-    // mas metodos
+    
+    
+    public function guarda()
+    {
+        if ($this->id !== null) {
+            return self::actualiza($this);
+        }
+        return self::inserta($this);
+    }
+
+    public function borrate()
+    {
+        if ($this->id !== null || $this->visible == true) {
+            $this->visible = false;
+            return self::update($this);
+        }
+        return false;
+    }
 }
