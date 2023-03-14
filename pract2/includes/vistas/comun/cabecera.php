@@ -10,10 +10,10 @@
 		<a href="index.php"> Películas </a>
 		<a href="cines_cartelera.php"> Cines/Cartelera </a>
 		<?php
-			//if(isset($_SESSION['login']) && (isset($_SESSION['esAdmin']))) {
+			if(isset($_SESSION['login']) && (isset($_SESSION['esAdmin'] || isset($_SESSION['esProveedor'])))) {
 				echo '<a href="proveerPeliculas.php"> Proveer peliculas </a>
-				      <a href="proveerCines.php"> Proveer Cines </a>';
-			//}
+				      <a href="proveerCines.php"> Proveer cines </a>';
+			}
 		?>
 		
 		<a href="biblioteca.php"> Biblioteca </a>
