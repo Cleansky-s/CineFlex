@@ -31,6 +31,7 @@ class Pelicula {
             $fila = $rs->fetch_assoc();
             if ($fila) {
                 // TODO __constructor
+                // HAY QUE HACER EL CONSTRUCTOR PARA PODER TERMINAR EL METODO
                 $result = new Pelicula();
             }
             $rs->free();
