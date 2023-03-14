@@ -18,14 +18,14 @@ Para hacer:
                     VISTAS
 ------------------------------------------------------
 
-1: Implementar la cabecera para que si eres proveedor/administrador te salgan 2 links: 'Proveer peliculas' y 'Proveer cines'
-2: Implementar lo mismo pero para administrador, donde salga un link: "Administrar".
+1: Implementar la cabecera para que si eres proveedor/administrador te salgan 2 links: 'Proveer peliculas' y 'Proveer cines' (Hecho creo)
+2: Implementar lo mismo pero para administrador, donde salga un link: "Administrar". (Hecho creo)
 
 ------- VISTA DE ADMINISTRADOR:
 Se muestran los usuarios y puedes añadirles o quitarles los roles de proveedor o moderador. ( en principio )
 
 ------- VISTA DE PROVEER PELICULAS:
-Implementar la vista de peliculasproveedor.php donde te te muestren un boton para añadir una pelicula. -> Te llevara a un "formulario" que rellenar.
+Implementar la vista de proveerPeliculas.php donde te te muestren un boton para añadir una pelicula. -> Te llevara a un "formulario" que rellenar.
 ( posible implementacion ): mostrar las peliculas que hayan sido añadidas por el proveedor
 
 ------- VISTA DE PROVEER CINES:
