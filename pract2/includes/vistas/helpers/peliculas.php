@@ -1,55 +1,44 @@
 <?php
 
-/**
- * Funcion de crear portada.
- * 
- * Version 1: mostrar todas las peliculas (o max 20 para que no explote)
- * 
- * Version 2: tener secciones:
- * 
- * - Nuevas -
- * Listar las peliculas nuevas (por fecha de adicion)
- * 
- * - Mejor valoradas -
- * Listar las pelis por mejor valoracion
- * 
- * (por generos)
- * - Accion -
- * Listar las pelis (por valoracion o fecha de adicion) que tengan genero de accion
- *  .
- *  . 
- *  . 
- */
-
-/**
- * Lista los cines que pertenecen al proveedor con id = $idProveedor
- */
 function listaPeliculasDeProveedor($idProveedor)
 {
-    $peliculas = Pelicula::buscaPorIdProveedor($idProveedor)
+    $peliculas = Pelicula::buscaPorIdProveedor($idProveedor);
+
+    if (count($peliculas) == 0) {
+        return '';
+    }
+
+    $html = "<div class='usuarios'>";
+    foreach($peliculas as $pelicula) {
+        $html .= portadaPelicula($pelicula->id);
+        // $html .= botonEditarPeli($pelicula);
+    }
+    $html .="</div>";
+    return $html;
 }
 
-/**
- * Funciones estilo ./mensajes.php
- */
+function portadaPelicula($pelicula)
+{
+    $linkInfoPeli = Utils::buildUrl('infoPelicula.php' [
+        $pelicula->id
+    ]);
+    $html = <<<EOS
+    <a href="{$linkInfoPeli}">
+        <img src="{$pelicula->urlPortada}" alt = "{$pelicula->titulo}"/>
+    </a>
+    EOS;
 
-/**
- * Funcion de crear un boton de editar pelicula (disponible en la ventana de proveer peliculas.)
- */
+    return $html;
+}
 
-/**
- * Funcion build button form estilo ./mensajes.php
- */
+function peliculaForm($action, $pelicula=null){
 
-/**
- * Funcion de crear un boton de borrar / editar la disponibilidad/visibilidad de la pelicula.
- */
+    $htmlForm = <<<EOS
+    <form action="{$action}" method="POST">
+        <fieldset>
 
-/**
- * Funcion de visualizar la peli
- * en principio una imagen con href a Utils::buildUrl('peliculas/infopelicula.php')
- */
-
-/**
- * Funciones formularios
- */
+            <label for="descripcion">Username:</label> <textarea id="descripcion" name="descripcion"></textarea>
+        </fieldset>
+    </form>
+    EOS;
+}

@@ -28,7 +28,7 @@ function mostrarProveedor()
         $urlProveerCines = Utils::buildUrl('/proveerCines.php');
         $html = <<<EOS
         <a href="{$urlProveerPelis}">Proveer Pelis</a>
-        <a href="{$urlProveerCines}">Proveer Pelis</a>
+        <a href="{$urlProveerCines}">Proveer Cines</a>
         EOS;
     }
     return $html;

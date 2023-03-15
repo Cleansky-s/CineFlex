@@ -34,6 +34,7 @@ function visualizaMensaje($mensaje)
     $verURL = Utils::buildUrl('mensajes/mensajes.php', [
         'id' => $mensaje->id
     ]);
+    'mensajes/mensajes.php?:id'
     return <<<EOS
     <a href="{$verURL}">{$mensaje->mensaje} ({$mensaje->autor?->nombreUsuario}) ({$mensaje->fechaYHora})</a>
     EOS;

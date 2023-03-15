@@ -11,9 +11,9 @@ if (!$idMensaje) {
 }
 
 $mensaje = Mensaje::buscaPorId($idMensaje);
-if (!$idMensaje) {
-    Utils::redirige(Utils::buildUrl('/tablon.php'));
-}
+// if (!$idMensaje) {
+//     Utils::redirige(Utils::buildUrl('/tablon.php'));
+// }
 
 $tituloPagina = 'Actualiza Mensaje';
 

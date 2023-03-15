@@ -22,7 +22,7 @@ class Pelicula {
     public static function buscaPorId($idPelicula)
     {
         $conn = BD::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM peliculas WHERE id=%d", $idUsuario);
+        $query = sprintf("SELECT * FROM peliculas WHERE id=%d", $idPelicula);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
@@ -41,6 +41,22 @@ class Pelicula {
         return $result;
     }
 
+    public static function buscaPorIdProveedor($idProveedor)
+    {
+        $conn = BD::getInstance()->getConexionBd();
+        $query = sprintf("SELECT * FROM peliculas WHERE idProveedor=%d", $idProveedor);
+        $rs = $conn->query($query);
+        $result = [];
+        if($rs) {
+            while ($fila = $rs->fetch_assoc()) {
+                $pelicula = new Pelicula();
+
+                $result[] = $pelicula;
+            }
+            $rs->free();
+        }
+        return $result;
+    }
     /**
      * Buscar por titulo
      * WHERE titulo LIKE '%'. $titulo .'%'
@@ -114,7 +130,7 @@ class Pelicula {
 
     // Datos del objeto
 
-    private const DATE_FORMAT = 'Y-m-d'
+    private const DATE_FORMAT = 'Y-m-d';
 
     private $id;
 
@@ -156,7 +172,7 @@ class Pelicula {
     private $visible;
 
     private function __construct() {
-
+        
     }
 
     public function getId() {

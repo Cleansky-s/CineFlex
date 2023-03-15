@@ -29,10 +29,45 @@ class Usuario
         return $user->guarda();
     }
 
+    public static function devolverUsuariosConRol() 
+    {
+        $conn = BD::getInstance()->getConexionBd();
+        $query = sprintf("SELECT * FROM Usuarios");
+        $rs = $conn->query($query);
+        $result = [];
+        if($rs) {
+            while ($fila = $rs->fetch_assoc()) {
+                $usuario = new Usuario($fila['nombreUsuario'], $fila['password'], $fila['nombre'], $fila['id']);
+                $usuario = self::cargaRoles($usuario);
+                $result[] = $usuario;
+            }
+            $rs->free();
+        }
+
+        return $result;
+    }
+
+    public static function getRoleTitles()
+    {
+        $conn = BD::getInstance()->getConexionBd();
+        $query = sprintf("SELECT * FROM Roles ORDER BY id ASC");
+        $rs = $conn->query($query);
+        $roles = [];
+        if($rs) {
+            while ($fila = $rs->fetch_assoc()) {
+                $roles[] = $fila['nombre'];
+            }
+            $rs->free();
+        }
+
+        return $roles;
+    }
+
+
     public static function buscaUsuario($nombreUsuario)
     {
         $conn = BD::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM Usuarios U WHERE U.nombreUsuario='%s'", $conn->real_escape_string($nombreUsuario));
+        $query = sprintf("SELECT * FROM Usuarios U WHERE U.nombreUsuario = '%s'", $conn->real_escape_string($nombreUsuario));
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
@@ -129,6 +164,7 @@ class Usuario
         return $usuario;
     }
     
+   
     private static function actualiza($usuario)
     {
         $result = false;
@@ -154,7 +190,7 @@ class Usuario
     private static function borraRoles($usuario)
     {
         $conn = BD::getInstance()->getConexionBd();
-        $query = sprintf("DELETE FROM RolesUsuario RU WHERE RU.usuario = %d"
+        $query = sprintf("DELETE FROM rolesusuario WHERE usuario = %d"
             , $usuario->id
         );
         if ( ! $conn->query($query) ) {
@@ -220,6 +256,11 @@ class Usuario
     public function getNombre()
     {
         return $this->nombre;
+    }
+
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
     }
 
     public function añadeRol($role)

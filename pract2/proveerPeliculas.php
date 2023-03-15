@@ -14,7 +14,7 @@ $contenidoPrincipal=<<<EOS
 EOS;
 
 
-$contenidoPrincipal .= "<h3>Lista de peliculas pertenecientes al proveedor</h3>"
+$contenidoPrincipal .= "<h3>Lista de peliculas pertenecientes al proveedor</h3>";
 $contenidoPrincipal .= listaPeliculasDeProveedor(idUsuarioLogado());
 
 require 'includes/vistas/comun/layout.php';
