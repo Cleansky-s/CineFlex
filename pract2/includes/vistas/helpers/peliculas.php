@@ -22,6 +22,14 @@
  */
 
 /**
+ * Lista los cines que pertenecen al proveedor con id = $idProveedor
+ */
+function listaPeliculasDeProveedor($idProveedor)
+{
+    $peliculas = Pelicula::buscaPorIdProveedor($idProveedor)
+}
+
+/**
  * Funciones estilo ./mensajes.php
  */
 

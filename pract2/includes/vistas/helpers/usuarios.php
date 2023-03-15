@@ -20,6 +20,32 @@ function saludo()
     return $html;
 }
 
+function mostrarProveedor() 
+{
+    $html = '';
+    if(esProveedor())  {
+        $urlProveerPelis = Utils::buildUrl('/proveerPeliculas.php');
+        $urlProveerCines = Utils::buildUrl('/proveerCines.php');
+        $html = <<<EOS
+        <a href="{$urlProveerPelis}">Proveer Pelis</a>
+        <a href="{$urlProveerCines}">Proveer Pelis</a>
+        EOS;
+    }
+    return $html;
+}
+
+function mostrarAdmin()
+{
+    $html = '';
+    if(esAdmin())  {
+        $urlAdmin = Utils::buildUrl('/admin.php');
+        $html = <<<EOS
+        <a href="{$urlAdmin}">Admin</a>
+        EOS;
+    }
+    return $html;
+}
+
 function logout()
 {
     //Doble seguridad: unset + destroy

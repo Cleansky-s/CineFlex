@@ -9,4 +9,5 @@ $contenidoPrincipal=<<<EOS
 	<p> Aquí estara el contenido de la biblioteca. </p>
 EOS;
 
+
 require 'includes/vistas/comun/layout.php';
