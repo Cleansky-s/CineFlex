@@ -12,7 +12,7 @@ function listaUsuarios()
 
     $tituloRoles = Usuario::getRoleTitles();
 
-    $html = "<div class='usuarios'>";
+    $html = "<div class='user-list'>";
     foreach($usuarios as $usuario) {
         $html .= visualizaUsuario($usuario, $tituloRoles);
     }
@@ -23,7 +23,7 @@ function listaUsuarios()
 function visualizaUsuario($usuario, $tituloRoles)
 {
     $html = <<<EOS
-    <div class="usuario">
+    <div class="user-card">
         <h4>{$usuario->nombre}</h4>
         <p>Id: {$usuario->id}</p>
         <p>Username: {$usuario->nombreUsuario}</p>
@@ -46,7 +46,7 @@ function botonEditarUsuario($usuario){
         'id' => $usuario->id
     ]);
     return <<<EOS
-    <a class="boton" href="{$editaURL}">Editar Roles</a>
+    <a href="{$editaURL}">Editar Roles</a>
     EOS;
 }
 
@@ -62,6 +62,9 @@ function rolesUsuarioForm(Usuario $usuario)
     <form action="actualizaRolesUsuario.php" method="POST">
         <input type="hidden" name="id" value="{$usuario->id}"/>
         <fieldset>
+            <h3>{$usuario->nombre}</h3>
+            <h4>{$usuario->nombreUsuario}</h4>
+            <p>Roles a modificar:</p>
             <input type="checkbox" id="proveedor" name="proveedor" value="{$proveedorValue}" {$proveedorChecked} />
             <label for="proveedor"> Proveedor</label>
             <input type="checkbox" id="moderador" name="moderador" value="{$moderadorValue}" {$moderadorChecked}/>

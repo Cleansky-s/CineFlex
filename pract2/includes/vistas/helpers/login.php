@@ -7,7 +7,7 @@ function buildFormularioLogin($username='', $password='')
     <form id="formLogin" action="{$procesaLogin}" method="POST">
         <fieldset>
             <legend>Usuario y contraseña</legend>
-            <div><label>Name:</label> <input type="text" name="username" value="$username" /></div>
+            <div><label>Username:</label> <input type="text" name="username" value="$username" /></div>
             <div><label>Password:</label> <input type="password" name="password" password="$password" /></div>
             <div><button type="submit">Entrar</button></div>
         </fieldset>
@@ -21,7 +21,7 @@ function buildFormularioRegister()
     return <<<EOS
     <form id="formLogin" action="{$procesaRegister}" method="POST">
         <fieldset>
-            <legend>Usuario y contraseña</legend>
+            <legend>Nombre, usuario y contraseña</legend>
             <div><label>Name:</label> <input type="text" name="name" /></div>
             <div><label>Username:</label> <input type="text" name="username" /></div>
             <div><label>Password:</label> <input type="password" name="password" /></div>

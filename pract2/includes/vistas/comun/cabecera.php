@@ -2,21 +2,21 @@
 	require_once __DIR__.'/../helpers/usuarios.php';
 ?>
 <header>
-	<div class="icon">
-		<a href="<?= Utils::buildUrl('/index.php') ?>"><img src="<?= Utils::buildUrl('/img/CineFlex.png') ?>" alt = "CineFlex" width = "100" /></a>
+	<div class="logo">
+	<a href="<?= Utils::buildUrl('/index.php') ?>"><img src="<?= Utils::buildUrl('/img/CineFlex.png') ?>" alt = "CineFlex" /></a>
 	</div>
-	<div class="links">
-		<div class = "left">
-			<a href="<?= Utils::buildUrl('/index.php') ?>"> Películas </a>
-			<a href="<?= Utils::buildUrl('cines_cartelera.php')?>"> Cines/Cartelera </a>
+	<nav>
+		<ul class = "nav-links">
+			<li><a href="<?= Utils::buildUrl('/index.php') ?>">Películas</a>
+			<li><a href="<?= Utils::buildUrl('/cines_cartelera.php')?>">Cines</a>
 			<?= mostrarProveedor() ?>
 			<?= mostrarAdmin() ?>
-		</div>
-				
-		<div class = "right">
-			<a href="biblioteca.php"> Biblioteca </a>
-			<?= saludo() ?>
-		</div>
+		</ul>
+	</nav>
+	<div class = "nav-profile">
+		<?= mostrarBiblioteca() ?>
+		<?= mostrarLogin() ?>
 	</div>
+
 	
 </header>

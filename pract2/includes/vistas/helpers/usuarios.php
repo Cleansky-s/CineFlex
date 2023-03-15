@@ -1,22 +1,34 @@
 <?php
 require_once 'autorizacion.php';
 
-function saludo()
+function mostrarLogin()
 {
     $html = '';
 
     if (estaLogado()) {
         $urlLogout = Utils::buildUrl('/logout.php');
         $html = <<<EOS
-        Bienvenido, {$_SESSION['nombre']} <a href="{$urlLogout}">(salir)</a>
+        <a href="{$urlLogout}">Logout</a>
         EOS;
     } else {
         $urlLogin = Utils::buildUrl('/login.php');
         $html = <<<EOS
-        Usuario desconocido. <a href="{$urlLogin}">Login</a>
+        <a href="{$urlLogin}">Login</a>
         EOS;
     }
 
+    return $html;
+}
+
+function mostrarBiblioteca()
+{
+    $html = '';
+    if (estaLogado()) {
+        $urlLogout = Utils::buildUrl('/biblioteca.php');
+        $html = <<<EOS
+        <a href="{$urlLogout}">Biblioteca</a>
+        EOS;
+    }
     return $html;
 }
 
@@ -27,8 +39,8 @@ function mostrarProveedor()
         $urlProveerPelis = Utils::buildUrl('/proveerPeliculas.php');
         $urlProveerCines = Utils::buildUrl('/proveerCines.php');
         $html = <<<EOS
-        <a href="{$urlProveerPelis}">Proveer Pelis</a>
-        <a href="{$urlProveerCines}">Proveer Cines</a>
+        <li><a href="{$urlProveerPelis}">Proveer Pelis</a></li>
+        <li><a href="{$urlProveerCines}">Proveer Cines</a></li>
         EOS;
     }
     return $html;
@@ -40,7 +52,7 @@ function mostrarAdmin()
     if(esAdmin())  {
         $urlAdmin = Utils::buildUrl('/admin.php');
         $html = <<<EOS
-        <a href="{$urlAdmin}">Admin</a>
+        <li><a href="{$urlAdmin}">Admin</a></li>
         EOS;
     }
     return $html;
