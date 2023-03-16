@@ -36,7 +36,7 @@ En construccion. (Hecho)
 (version 1) mostrar todas las peliculas del cine. a poder ser en formato de <a href="infopelicula.php"><img src="img.png"></a> pero pasandole parametros para poder cargarlos en la siguiente vista.
 (version 2) hacer secciones donde se haga uso de los metodos de filtrar por generos, o de filtrar por valoracion o fecha de creacion...
 
-------- VISTA DE INFO DE PELICULA:
+------- VISTA DE INFO DE PELICULA: 
 Mostrar toda la info de la pelicula:
 Poner su titulo, cargar la imagen de la portada.
 En el caso de que $pelicula->visible sea true entonces cargar los botones que permitan ver por suscripcion, comprar o alquilar. (siempre que enSuscripcion sea true, y el precio de compra o alquiler sea mayor que 0)

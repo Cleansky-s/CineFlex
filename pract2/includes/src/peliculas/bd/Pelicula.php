@@ -341,6 +341,22 @@ class Pelicula {
         return $this->proveedor;
     }
 
+    public function getTitulo(){
+        return $this->titulo;
+    }
+
+    public function getUrlTrailer(){
+        return $this->urlTrailer;
+    }
+
+    public function getDescripcion(){
+        return $this->descripcion;
+    }
+
+    public function getVisible(){
+        return $this->visible;
+    }
+
     // Posible no uso de la funcion: cuando se añade una pelicula en principio lo hace un proveedor, por lo que no habria que cambiarla?
     // Unico caso que se me ocurre es que cambie la cuenta/id del proveedor o que un administrador haya añadido una pelicula sin proveedor y luego pase a pertenecer a un proveedor.
     // Nuevo proveedor es un Usuario.

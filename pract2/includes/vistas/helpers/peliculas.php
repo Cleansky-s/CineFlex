@@ -33,6 +33,29 @@ function portadaPelicula($pelicula)
     return $html;
 }
 
+function detallesPelicula($idPelicula){
+    $pelicula = Pelicula::buscaPorId($idPelicula);
+    $urlCompra = Utils::buildUrl('/compra/compra.php');
+    if($pelicula->getVisible()){
+    $html = <<<EOS
+    <h1>{$pelicula->getTitulo()}</h1>
+    <div>
+        <p> {$pelicula->getDescripcion()}</p>
+    </div>
+    "<form action="{$urlCompra}" method="POST">
+        <input type="submit" value="Compra" />
+    </form>";
+    EOS;
+    }
+    else{
+        $html = <<<EOS
+        <h1> Pelicula no disponible</h1>
+        EOS;
+    }
+
+    return $html;
+}
+
 function peliculaForm($action, $pelicula=null){
     $idProveedor = idUsuarioLogado();
     $htmlForm = <<<EOS
