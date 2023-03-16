@@ -26,13 +26,24 @@ class Pelicula {
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
-            // En el siguiente link se pueden encontrar los distintos 
-            // https://www.php.net/manual/en/class.mysqli-result.php
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                // TODO __constructor
-                // HAY QUE HACER EL CONSTRUCTOR PARA PODER TERMINAR EL METODO
-                $result = new Pelicula();
+                $result = new Pelicula(
+                    $fila['titulo'],
+                    $fila['descripcion'],
+                    $fila['urlPortada'],
+                    $fila['urlTrailer'],
+                    $fila['urlPelicula'],
+                    $fila['enSuscripcion'],
+                    $fila['fechaCreacion'],
+                    $fila['visible'],
+                    $fila['precioCompra'],
+                    $fila['precioAlquiler'],
+                    $fila['valoracionMedia'],
+                    $fila['valoracionCuenta'],
+                    $fila['idProveedor'],
+                    $fila['id']
+                );
             }
             $rs->free();
         } else {
@@ -49,11 +60,69 @@ class Pelicula {
         $result = [];
         if($rs) {
             while ($fila = $rs->fetch_assoc()) {
-                $pelicula = new Pelicula();
+                $pelicula = new Pelicula(
+                    $fila['titulo'],
+                    $fila['descripcion'],
+                    $fila['urlPortada'],
+                    $fila['urlTrailer'],
+                    $fila['urlPelicula'],
+                    $fila['enSuscripcion'],
+                    $fila['fechaCreacion'],
+                    $fila['visible'],
+                    $fila['precioCompra'],
+                    $fila['precioAlquiler'],
+                    $fila['valoracionMedia'],
+                    $fila['valoracionCuenta'],
+                    $fila['idProveedor'],
+                    $fila['id']
+                );
 
                 $result[] = $pelicula;
             }
             $rs->free();
+        }
+        return $result;
+    }
+
+    private static function actualiza($pelicula)
+    {
+        $result = false;
+        $conn = BD::getInstance()->getConexionBd();
+        $sql = `
+        "UPDATE peliculas SET 
+            idProveedor = %d , 
+            titulo = '%s' , 
+            descripcion = '%s' , 
+            urlPortada = '%s' , 
+            urlTrailer = '%s' , 
+            urlPelicula = '%s' , 
+            precioCompra = %s , 
+            precioAlquiler = %s , 
+            enSuscripcion = %s , 
+            fechaCreacion '%s', 
+            visible = %s 
+        WHERE id = %d" `;
+        $query=sprintf( $sql
+            , !is_null($pelicula->idProveedor) ? $pelicula->idProveedor : 'null'
+            , $conn->real_escape_string($pelicula->titulo)
+            , $conn->real_escape_string($pelicula->descripcion)
+            , $conn->real_escape_string($pelicula->urlPortada)
+            , $conn->real_escape_string($pelicula->urlTrailer)
+            , $conn->real_escape_string($pelicula->urlPelicula)
+            , !is_null($pelicula->precioCompra) ? $pelicula->precioCompra : 'DEFAULT'
+            , !is_null($pelicula->precioAlquiler) ? $pelicula->precioAlquiler : 'DEFAULT'
+            , ($pelicula->enSuscripcion) ? 'TRUE' : 'FALSE'
+            , $conn->real_escape_string($pelicula->fechaCreacion)
+            , ($pelicula->visible) ? 'TRUE' : 'FALSE'
+            , $pelicula->id
+        );
+        if ( $conn->query($query) ) {
+            $pelicula->id = $conn->insert_id;
+            $result = self::insertaGeneros($pelicula);
+            // $result = self::insertaActores($pelicula);
+            // $result = self::insertaDirectores($pelicula);
+        } else {
+            error_log("Error BD ({$conn->errno}): {$conn->error}");
         }
         return $result;
     }
@@ -134,8 +203,6 @@ class Pelicula {
 
     private $id;
 
-    private $idProveedor;
-
     private $proveedor;
 
     private $titulo;
@@ -171,8 +238,38 @@ class Pelicula {
 
     private $visible;
 
-    private function __construct() {
-        
+    private function __construct(
+        $titulo,
+        $descripcion,
+        $urlPortada,
+        $urlTrailer,
+        $urlPelicula,
+        $enSuscripcion,
+        $fechaCreacion,
+        $visible = true,
+        $precioCompra = null,
+        $precioAlquiler = null,
+        $valoracionMedia = 0,
+        $valoracionCuenta = 0,
+        $idProveedor = null,
+        $id = null,
+        $generos = []
+    ) {
+        $this->id = $id;
+        $this->idProveedor = $idProveedor;
+        $this->titulo = $titulo;
+        $this->descripcion = $descripcion;
+        $this->generos = $generos;
+        $this->urlPortada = $urlPortada;
+        $this->urlTrailer = $urlTrailer;
+        $this->urlPelicula = $urlPelicula;
+        $this->precioCompra = $precioCompra;
+        $this->precioAlquiler = $precioAlquiler;
+        $this->enSuscripcion = $enSuscripcion;
+        $this->valoracionMedia = $valoracionMedia;
+        $this->valoracionCuenta = $valoracionCuenta;
+        $this->fechaCreacion = $fechaCreacion;
+        $this->visible = $visible;
     }
 
     public function getId() {
@@ -208,11 +305,11 @@ class Pelicula {
         return self::inserta($this);
     }
 
-    public function borrate()
+    public function noVisible()
     {
         if ($this->id !== null || $this->visible == true) {
             $this->visible = false;
-            return self::update($this);
+            return self::actualiza($this);
         }
         return false;
     }
