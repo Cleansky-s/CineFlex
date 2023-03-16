@@ -1,0 +1,56 @@
+Para hacer: 
+
+------------------------------------------------------
+                    BACKEND
+------------------------------------------------------
+
+------- USUARIOS
+1 (hecho): Añadir (si no esta ya hecho) un metodo para poder modificar los roles de un usuario.
+
+
+------- PELICULAS
+1 (hecho ?): Crear los metodos de __construct, insertar, guardar, borrar, actualizar, etc. de ./includes/src/peliculas/bd/Pelicula.php
+2: Añadir metodos para la seleccion de peliculas dependiendo del idProveedor, generos o del titulo. (seleccion de peliculas por id ya implementado (creo)).
+3: (secundario) Añadir a los metodos funcionalidad para filtrar en orden cronologico por fechaCreacion, fechaAdicion, o valoracion.
+
+
+------------------------------------------------------
+                    VISTAS
+------------------------------------------------------
+
+1 (Hecho): Implementar la cabecera para que si eres proveedor/administrador te salgan 2 links: 'Proveer peliculas' y 'Proveer cines' (Hecho)
+2 (Hecho): Implementar lo mismo pero para administrador, donde salga un link: "Administrar". (Hecho)
+
+(hecho) ------- VISTA DE ADMINISTRADOR:
+Se muestran los usuarios y puedes añadirles o quitarles los roles de proveedor o moderador. ( en principio )
+
+(casi hecho, chequear files)------- VISTA DE PROVEER PELICULAS:
+(hecho) Implementar la vista de proveerPeliculas.php donde te te muestren un boton para añadir una pelicula. -> Te llevara a un "formulario" que rellenar.
+(hecho) Mostrar las peliculas que hayan sido añadidas por el proveedor
+Añadir funcionalidad los upload files
+
+(Hecho) ------- VISTA DE PROVEER CINES:
+En construccion. (Hecho)
+
+------- VISTA DE PELICULAS:
+(version 1) mostrar todas las peliculas del cine. a poder ser en formato de <a href="infopelicula.php"><img src="img.png"></a> pero pasandole parametros para poder cargarlos en la siguiente vista.
+(version 2) hacer secciones donde se haga uso de los metodos de filtrar por generos, o de filtrar por valoracion o fecha de creacion...
+
+------- VISTA DE INFO DE PELICULA:
+Mostrar toda la info de la pelicula:
+Poner su titulo, cargar la imagen de la portada.
+En el caso de que $pelicula->visible sea true entonces cargar los botones que permitan ver por suscripcion, comprar o alquilar. (siempre que enSuscripcion sea true, y el precio de compra o alquiler sea mayor que 0)
+En el caso de que $pelicula->visible sea false, poner "No esta disponible".
+Valoracion, descripcion, actores, directores, generos, fecha de creacion, fecha de adicion...
+Habra que añadir seccionValoraciones(); pero que este en construccion.
+Lo mismo para comentarios y articulos.
+
+------------------------------------------------------
+                    IMPORTANTE
+------------------------------------------------------
+
+Para la implementacion de las vistas relacionadas con las peliculas, poner toda la funcionalidad de creacion de vistas en el helper peliculas.php
+
+Habrá que crear helpers llamados comentarios, cines, valoraciones, articulos, biblioteca, compra y alquiler (quizas)... .php
+Tambien hay que crear los anteriores pero en includes/src/ , cada uno con su carpeta y con capital letter para ver que son clases de acceso.
+Habra que crear carpetas para las vistas dependiendo de su funcionalidad ( al estilo de la carpeta /mensajes/ ), como por ejemplo /peliculas/nuevaPelicula.php, /peliculas/borrarPelicula.php , /peliculas/editarPelicula.php
