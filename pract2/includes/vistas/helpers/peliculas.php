@@ -3,23 +3,27 @@
 
 function listaPeliculas() {
     $peliculas = Pelicula::devuelvePeliculas();
-    $html='';
     if (count($peliculas) == 0) {
-        $html .= '<p>Aun no hay peliculas de este proveedor</p>';
+        $html = '<p>Aun no hay peliculas añadidas</p>';
         return $html;
     }
-    $html .= creaPortadas($peliculas);
-
-    return $html;
-}
-
-function creaPortadas($peliculas) {
-    $html = "<div class='portada-pelis'>";
+    $html = "<div>";
     foreach($peliculas as $pelicula) {
         $html .= portadaPelicula($pelicula);
     }
     $html .="</div>";
+
     return $html;
+}
+
+
+function botonEditarPelicula($id) {
+    $editaURL = Utils::buildUrl('peliculas/editarPelicula.php', [
+        'id' => $id
+    ]);
+    return <<<EOS
+    <a href="{$editaURL}">Editar Pelicula</a>
+    EOS;
 }
 
 function listaPeliculasDeProveedor($idProveedor)
@@ -32,7 +36,12 @@ function listaPeliculasDeProveedor($idProveedor)
         return $html;
     }
 
-    $html .= creaPortadas($peliculas);
+    $html .= "<div>";
+    foreach($peliculas as $pelicula) {
+        $html .= portadaPelicula($pelicula);
+        $html .= botonEditarPelicula($pelicula->id);
+    }
+    $html .="</div>";
 
     return $html;
 }
@@ -43,79 +52,164 @@ function portadaPelicula($pelicula)
     $rutaPortada = Utils::buildUrl("almacen/portadas/{$pelicula->urlPortada}");
     $html = <<<EOS
     <a href="{$linkInfoPeli}">
-        <img src="{$rutaPortada}" alt = "{$pelicula->titulo}" type=image/webp />
+        <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
     </a>
     EOS;
     return $html;
 }
 
-function detallesPelicula($idPelicula){
-    $pelicula = Pelicula::buscaPorId($idPelicula);
-    $urlCompra = Utils::buildUrl('/compra/compra.php');
-    if($pelicula->getVisible()){
+function detallesPelicula($pelicula){
+    // a hacer
+    $rutaPortada = Utils::buildUrl("almacen/portadas/{$pelicula->urlPortada}");
+    $rutaTrailer = Utils::buildUrl("almacen/trailers/{$pelicula->urlTrailer}");
     $html = <<<EOS
+    <div class="info-peli">
     <h1>{$pelicula->getTitulo()}</h1>
-    <div>
-        <p> {$pelicula->getDescripcion()}</p>
-    </div>
-    "<form action="{$urlCompra}" method="POST">
-        <input type="submit" value="Compra" />
-    </form>";
+    <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
+    <p>{$pelicula->descripcion}</p>
+    <p>Generos: {$pelicula->generosToString()}</p>
+    <p>Fecha de salida: {$pelicula->fechaCreacion}</p>
+    <p>Valoracion media: {$pelicula->valoracionMedia} con un total de {$pelicula->valoracionCuenta} valoraciones</p>
     EOS;
-    }
-    else{
-        $html = <<<EOS
-        <h1> Pelicula no disponible</h1>
-        EOS;
-    }
 
+    if($pelicula->visible){
+        // Si una pelicula esta en suscripcion mostramos solo el boton de "Ver"
+        // Si no, mostramos el boton de comprar y alquilar
+        if($pelicula->enSuscripcion){
+            $html .= botonEnSuscripcion($pelicula->id);
+        }
+        else {
+            $html .= botonesCompra($pelicula);
+        }
+    }
+    else {
+        $html .= "<h4>Pelicula no disponible para ver</h4>";
+    }
+    
+    $html .= <<<EOS
+    <h3>Trailer</h3>
+    <video width="320" height="240" controls autoplay muted>
+        <source src="{$rutaTrailer}">
+        No se puede reproducir el trailer.
+    </video>
+    EOS;
+
+    $html .= "</div>";
     return $html;
 }
 
-function peliculaForm($action, $pelicula=null){
+function verPelicula($id) {
+    $pelicula = Pelicula::buscaPorId($id);
+    $rutaPeli = Utils::buildUrl("almacen/peliculas/{$pelicula->urlPelicula}");
+    return <<<EOS
+    <video width="1280" height="1024" controls autoplay>
+        <source src="{$rutaPeli}">
+        No se puede reproducir el trailer.
+    </video>
+    EOS;
+}
+
+function botonEnSuscripcion($id) {
+    $action = Utils::buildUrl('/peliculas/verPelicula.php');
+    $htmlButtonForm = <<<EOS
+    <form action="{$action}" method="POST">
+        <input type="hidden" name="id" value="{$id}" />
+        <input type="submit" value="Ver Pelicula" />
+    </form>
+    EOS;
+    return $htmlButtonForm;
+}
+
+function botonesCompra($pelicula) {
+    $action = Utils::buildUrl('/compras/comprar.php', [ 'id' => $pelicula->id]);
+    $htmlButtonForm = <<<EOS
+    <div>
+    <form id="compra" action="{$action}" method="GET">
+        <label for="compra">Comprar</label>
+        <input type="submit" for="compra" value="{$pelicula->precioCompra}" />
+    </form>
+    </div>
+    EOS;
+    $action = Utils::buildUrl('/compras/alquilar.php');
+    $htmlButtonForm .= <<<EOS
+    <div>
+    <form id="alquiler" action="{$action}" method="GET">
+        <label for="alquiler">Alquiler</label>
+        <input type="submit" for="alquiler" value="{$pelicula->precioAlquiler}" />
+    </form>
+    </div>
+    EOS;
+    return $htmlButtonForm;
+}
+
+function botonAlquiler($pelicula) {
+    
+}
+
+function peliculaForm($action, $pelicula){
     $idProveedor = idUsuarioLogado();
     $htmlForm = <<<EOS
     <form action="{$action}" enctype='multipart/form-data' method="POST">
         <input type="hidden" name="idProveedor" value="{$idProveedor} "/>
+        <input type="hidden" name="valoracionMedia" value="{$pelicula->valoracionMedia}" />
+        <input type="hidden" name="valoracionCuenta" value="{$pelicula->valoracionCuenta}" />
         <fieldset>
             <label for="titulo">titulo:</label>
-            <input type="text" name="titulo" required/>
+            <input type="text" name="titulo" required value="{$pelicula->titulo}"/>
+
             <label for="descripcion">descripcion:</label>
-            <textarea name="descripcion" rows=10 columns=100 required></textarea>
+            <textarea name="descripcion" rows=10 columns=100 required >{$pelicula->descripcion}</textarea>
+
             <label for="generos">generos:</label>
             <select name="generos[]" multiple required size = 14>
     EOS;
     $generos = Pelicula::GENEROS;
     foreach($generos as $idGenero => $nombreGenero){
-        $htmlForm .= "<option value='{$idGenero}' >{$nombreGenero}</option>";
+        $selected = ($pelicula->tieneGenero($idGenero)) ? 'selected' : '';
+        $htmlForm .= "<option value='{$idGenero}' $selected>{$nombreGenero}</option>";
     }
+
+    // no es posible poner el input file en predeterminado a como lo tenia antes la pelicula...
+
+
+    $enSuscripcionChecked = ($pelicula->enSuscripcion) ? 'checked' : "";
+    $visibleChecked = ($pelicula->visible) ? 'checked' : ""; 
+
     $htmlForm .= <<<EOS
             </select>
             <label for="urlPortada">urlPortada:</label>
             <input type="file" name="urlPortada" accept="image/*" required/>
+
             <label for="urlTrailer">urlTrailer:</label>
             <input type="file" name="urlTrailer" accept="video/*" required/>
+
             <label for="urlPelicula">urlPelicula:</label>
             <input type="file" name="urlPelicula" accept="video/*" required/>
+
             <label for="precioCompra">precioCompra:</label>
-            <input type="number" step="0.01" max=99.99 min=0 name="precioCompra" value="7.99" required/>
+            <input type="number" step="0.01" max=99.99 min=0 name="precioCompra" value="{$pelicula->precioCompra}" required/>
+
             <label for="precioAlquiler">precioAlquiler:</label>
-            <input type="number" step="0.01" max=99.99 min=0 name="precioAlquiler" value="2.99" required/>
+            <input type="number" step="0.01" max=99.99 min=0 name="precioAlquiler" value="{$pelicula->precioAlquiler}" required/>
+
             <div>
-            <input type="checkbox" name="enSuscripcion" value="enSuscripcion" />
+            <input type="checkbox" name="enSuscripcion" value="enSuscripcion" $enSuscripcionChecked/>
             <label for="enSuscripcion">enSuscripcion</label>
             </div>
+
             <div>
-            <input type="checkbox" name="visible" value="visible" />
+            <input type="checkbox" name="visible" value="visible" $visibleChecked/>
             <label for="visible">visible</label>
             </div>
-            <label for="fechaCreacion">Fecha de Salida:</label>
-            <input type="date" name="fechaCreacion" />
+
+            <label for="fechaCreacion" >Fecha de Salida:</label>
+            <input type="date" name="fechaCreacion" value="{$pelicula->fechaCreacion}"/>
 
             <input type="submit" value="Añadir" />
         </fieldset>
     </form>
     EOS;
+
     return $htmlForm;
 }
 

@@ -36,7 +36,7 @@ INSERT INTO `generos` (`id`, `nombre`) VALUES
 (9, 'musical'),
 (10, 'noir'),
 (11, 'romance'),
-(12, 'fiction'),
+(12, 'science fiction'),
 (13, 'thriller'),
 (14, 'western');
 

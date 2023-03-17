@@ -33,8 +33,9 @@ function visualizaUsuario($usuario, $tituloRoles)
     foreach($usuario->roles as $rol) {
         $html .= "<p>{$tituloRoles[$rol-1]}</p>";
     }
-
-    $html .= botonEditarUsuario($usuario);
+    if(!($usuario->tieneRol(Usuario::ADMIN_ROLE))){
+        $html .= botonEditarUsuario($usuario);
+    }
     $html .= "</div>";
 
     return $html;

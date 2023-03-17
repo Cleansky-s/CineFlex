@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-03-2023 a las 10:55:33
--- Versión del servidor: 10.4.24-MariaDB
--- Versión de PHP: 8.1.6
+-- Tiempo de generación: 17-03-2023 a las 17:03:54
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -31,10 +31,10 @@ CREATE TABLE `alquiler` (
   `idUsuario` int(11) NOT NULL,
   `idPelicula` int(11) NOT NULL,
   `fechaCompra` datetime NOT NULL,
-  `precio` datetime NOT NULL,
+  `precio` decimal(4,2) NOT NULL,
   `fechaMax` datetime NOT NULL,
   `activo` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,7 @@ CREATE TABLE `comentarios` (
   `idPelicula` int(11) NOT NULL,
   `texto` varchar(255) NOT NULL,
   `idPadre` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -62,7 +62,7 @@ CREATE TABLE `compras` (
   `idPelicula` int(11) NOT NULL,
   `fecha` datetime NOT NULL,
   `precio` decimal(4,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -73,7 +73,7 @@ CREATE TABLE `compras` (
 CREATE TABLE `generos` (
   `id` int(11) NOT NULL,
   `nombre` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -84,7 +84,7 @@ CREATE TABLE `generos` (
 CREATE TABLE `generospelicula` (
   `id` int(11) NOT NULL,
   `genero` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -97,9 +97,9 @@ CREATE TABLE `peliculas` (
   `idProveedor` int(11) DEFAULT NULL,
   `titulo` varchar(50) NOT NULL,
   `descripcion` varchar(255) NOT NULL,
-  `urlPortada` varchar(255) NOT NULL,
-  `urlTrailer` varchar(255) NOT NULL,
-  `urlPelicula` varchar(255) NOT NULL,
+  `urlPortada` varchar(30) NOT NULL,
+  `urlTrailer` varchar(30) NOT NULL,
+  `urlPelicula` varchar(30) NOT NULL,
   `precioCompra` decimal(4,2) NOT NULL DEFAULT 7.99,
   `precioAlquiler` decimal(4,2) NOT NULL DEFAULT 2.99,
   `enSuscripcion` tinyint(1) NOT NULL,
@@ -108,7 +108,7 @@ CREATE TABLE `peliculas` (
   `fechaCreacion` date NOT NULL,
   `visible` tinyint(1) NOT NULL,
   `fechaAnadir` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -119,7 +119,7 @@ CREATE TABLE `peliculas` (
 CREATE TABLE `roles` (
   `id` int(11) NOT NULL,
   `nombre` varchar(15) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -130,7 +130,7 @@ CREATE TABLE `roles` (
 CREATE TABLE `rolesusuario` (
   `usuario` int(11) NOT NULL,
   `rol` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -143,7 +143,7 @@ CREATE TABLE `usuarios` (
   `nombreUsuario` varchar(30) NOT NULL,
   `password` varchar(70) NOT NULL,
   `nombre` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -156,7 +156,7 @@ CREATE TABLE `valoraciones` (
   `idPelicula` int(11) NOT NULL,
   `valoracion` tinyint(5) NOT NULL,
   `texto` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Disparadores `valoraciones`
@@ -325,9 +325,7 @@ ALTER TABLE `compras`
 -- Filtros para la tabla `generospelicula`
 --
 ALTER TABLE `generospelicula`
-  ADD CONSTRAINT `GenerosPelicula_idgenero` FOREIGN KEY (`genero`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
--- Esta siguiente linea da error porque cuando se crea una pelicula en vez de insertarse se actualiza, pero no hay nada que coincida en generospelicula
---  ADD CONSTRAINT `GenerosPeliculas_Id` FOREIGN KEY (`id`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  ADD CONSTRAINT `GenerosPeliculas_IdGenero` FOREIGN KEY (`genero`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `rolesusuario`

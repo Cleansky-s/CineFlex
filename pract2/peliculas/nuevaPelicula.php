@@ -1,9 +1,9 @@
 <?php
 
-
 require_once '../includes/config.php';
 require_once '../includes/vistas/helpers/autorizacion.php';
-require_once '../includes/vistas/helpers/almacen.php';
+
+verificaLogado(Utils::buildUrl('/login.php'));
 
 $tituloPagina = 'Nueva Pelicula';
 

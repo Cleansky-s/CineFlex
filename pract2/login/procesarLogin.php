@@ -26,9 +26,4 @@ $_SESSION['idUsuario'] = $usuario->id;
 $_SESSION['roles'] = $usuario->roles;
 $_SESSION['nombre'] = $usuario->nombre;
 
-$contenidoPrincipal=<<<EOS
-	<h1>Bienvenido ${_SESSION['nombre']}</h1>
-	<p>Usa el menú de la izquierda para navegar.</p>
-EOS;
-
-require '../includes/vistas/comun/layout.php';
+Utils::redirige(Utils::buildUrl("index.php"));

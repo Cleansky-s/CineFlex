@@ -47,6 +47,10 @@ class Pelicula {
         return $pelicula->guarda();
     }
 
+    public static function emptyPelicula() {
+        return new Pelicula('','',null,null,null,false,'',true,7.99,2.99);
+    }
+
     public static function devuelvePeliculas()
     {
         $conn = BD::getInstance()->getConexionBd();
@@ -246,10 +250,7 @@ class Pelicula {
         );
         if ( $conn->query($query) ) {
             $pelicula->id = $conn->insert_id;
-            $result = self::borraGeneros($pelicula);
-            if($result){
-                $result = self::insertaGeneros($pelicula);
-            }
+            $result = self::insertaGeneros($pelicula);
             // $result = self::insertaActores($pelicula);
             // $result = self::insertaDirectores($pelicula);
         } else {
@@ -262,7 +263,7 @@ class Pelicula {
     {
         $conn = BD::getInstance()->getConexionBd();
         foreach($pelicula->generos as $genero) {
-            $query = sprintf("INSERT INTO generospelicula VALUES ( %d , %d )"
+            $query = sprintf("INSERT INTO generospelicula (id, genero) VALUES ( %d , %d )"
                 , $pelicula->id
                 , $genero
             );
@@ -371,6 +372,9 @@ class Pelicula {
     public function getUrlTrailer() {
         return $this->urlTrailer;
     }
+    public function getUrlPelicula() {
+        return $this->urlPelicula;
+    }
     public function getPrecioCompra() {
         return $this->precioCompra;
     }
@@ -412,50 +416,27 @@ class Pelicula {
 
     public function tieneGenero($genero)
     {
-        if ($this->roles == null) {
+        if ($this->generos == null) {
             self::cargaGeneros($this);
         }
         return array_search($genero, $this->generos) !== false;
-    }
+    }    
 
-    // Posible no uso de la funcion: cuando se añade una pelicula en principio lo hace un proveedor, por lo que no habria que cambiarla?
-    // Unico caso que se me ocurre es que cambie la cuenta/id del proveedor o que un administrador haya añadido una pelicula sin proveedor y luego pase a pertenecer a un proveedor.
-    // Nuevo proveedor es un Usuario.
-    public function setProveedor($nuevoProveedor) {
-        $this->proveedor = $nuevoProveedor;
-        $this->idProveedor = $nuevoProveedor->id;
+    public function generosToString() 
+    {
+        $return = '';
+        foreach($this->generos as $genero) {
+            $return .= ucfirst(Pelicula::GENEROS[$genero]) . " ";
+        }
+        return $return;
     }
-
-    
     
     public function guarda()
     {
-        if ($this->id !== null) {
+        if ($this->id != null) {
             return self::actualiza($this);
         }
         return self::inserta($this);
-    }
-    
-
-    public function print() {
-
-        return <<<EOS
-        <p>{$this->id}</p>
-        <p>{$this->idProveedor} </p>
-        <p>{$this->titulo} </p>
-        <p>{$this->descripcion} </p>
-        <p>{$this->generos} </p>
-        <p>{$this->urlPortada}</p>
-        <p>{$this->urlTrailer} </p>
-        <p>{$this->urlPelicula} </p>
-        <p>{$this->precioCompra} </p>
-        <p>{$this->precioAlquiler} </p>
-        <p>{$this->enSuscripcion}</p>
-        <p>{$this->valoracionMedia} </p>
-        <p>{$this->valoracionCuenta}</p>
-        <p>{$this->fechaCreacion}</p>
-        <p>{$this->visible}</p>
-        EOS;
     }
 
     public function noVisible()
