@@ -325,8 +325,9 @@ ALTER TABLE `compras`
 -- Filtros para la tabla `generospelicula`
 --
 ALTER TABLE `generospelicula`
-  ADD CONSTRAINT `GenerosPelicula_idgenero` FOREIGN KEY (`genero`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `GenerosPeliculas_Id` FOREIGN KEY (`id`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `GenerosPelicula_idgenero` FOREIGN KEY (`genero`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- Esta siguiente linea da error porque cuando se crea una pelicula en vez de insertarse se actualiza, pero no hay nada que coincida en generospelicula
+--  ADD CONSTRAINT `GenerosPeliculas_Id` FOREIGN KEY (`id`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 
 --
 -- Filtros para la tabla `rolesusuario`

@@ -1,5 +1,27 @@
 <?php
 
+
+function listaPeliculas() {
+    $peliculas = Pelicula::devuelvePeliculas();
+    $html='';
+    if (count($peliculas) == 0) {
+        $html .= '<p>Aun no hay peliculas de este proveedor</p>';
+        return $html;
+    }
+    $html .= creaPortadas($peliculas);
+
+    return $html;
+}
+
+function creaPortadas($peliculas) {
+    $html = "<div class='portada-pelis'>";
+    foreach($peliculas as $pelicula) {
+        $html .= portadaPelicula($pelicula);
+    }
+    $html .="</div>";
+    return $html;
+}
+
 function listaPeliculasDeProveedor($idProveedor)
 {
     $peliculas = Pelicula::buscaPorIdProveedor($idProveedor);
@@ -10,74 +32,63 @@ function listaPeliculasDeProveedor($idProveedor)
         return $html;
     }
 
-    $html .= "<div class='usuarios'>";
-    foreach($peliculas as $pelicula) {
-        $html .= portadaPelicula($pelicula->id);
-        // $html .= botonEditarPeli($pelicula);
-    }
-    $html .="</div>";
+    $html .= creaPortadas($peliculas);
+
     return $html;
 }
 
 function portadaPelicula($pelicula)
 {
-    $linkInfoPeli = Utils::buildUrl('infoPelicula.php' [
-        $pelicula->id
-    ]);
+    $linkInfoPeli = Utils::buildUrl('infoPelicula.php', [ 'id' => $pelicula->id ]);
+    $rutaPortada = Utils::buildUrl("almacen/portadas/{$pelicula->urlPortada}");
     $html = <<<EOS
     <a href="{$linkInfoPeli}">
-        <img src="{$pelicula->urlPortada}" alt = "{$pelicula->titulo}"/>
+        <img src="{$rutaPortada}" alt = "{$pelicula->titulo}" type=image/webp />
     </a>
     EOS;
-
     return $html;
 }
 
 function peliculaForm($action, $pelicula=null){
     $idProveedor = idUsuarioLogado();
     $htmlForm = <<<EOS
-    <form action="{$action}" method="POST">
+    <form action="{$action}" enctype='multipart/form-data' method="POST">
         <input type="hidden" name="idProveedor" value="{$idProveedor} "/>
         <fieldset>
             <label for="titulo">titulo:</label>
-            <input type="text" name="titulo" value=""/>
+            <input type="text" name="titulo" required/>
             <label for="descripcion">descripcion:</label>
-            <textarea name="descripcion"></textarea>
+            <textarea name="descripcion" rows=10 columns=100 required></textarea>
             <label for="generos">generos:</label>
-            <select name="generos" multiple size = 14>
-                <option value="1">action</option>
-                <option value="2">adventure</option>
-                <option value="3">animation</option>
-                <option value="4">comedy</option>
-                <option value="5">drama</option>
-                <option value="6">fantasy</option>
-                <option value="7">historical</option>
-                <option value="8">horror</option>
-                <option value="9">musical</option>
-                <option value="10">noir</option>
-                <option value="11">romance</option>
-                <option value="12 fiction">science fiction</option>
-                <option value="13">thriller</option>
-                <option value="14">western</option>
+            <select name="generos[]" multiple required size = 14>
+    EOS;
+    $generos = Pelicula::GENEROS;
+    foreach($generos as $idGenero => $nombreGenero){
+        $htmlForm .= "<option value='{$idGenero}' >{$nombreGenero}</option>";
+    }
+    $htmlForm .= <<<EOS
             </select>
             <label for="urlPortada">urlPortada:</label>
-            <input type="file" name="urlPortada" value=""/>
+            <input type="file" name="urlPortada" accept="image/*" required/>
             <label for="urlTrailer">urlTrailer:</label>
-            <input type="file" name="urlTrailer" value=""/>
+            <input type="file" name="urlTrailer" accept="video/*" required/>
             <label for="urlPelicula">urlPelicula:</label>
-            <input type="file" name="urlPelicula" value=""/>
+            <input type="file" name="urlPelicula" accept="video/*" required/>
             <label for="precioCompra">precioCompra:</label>
-            <input type="text" name="precioCompra" value="7.99"/>
+            <input type="number" step="0.01" max=99.99 min=0 name="precioCompra" value="7.99" required/>
             <label for="precioAlquiler">precioAlquiler:</label>
-            <input type="text" name="precioAlquiler" value="2.99"/>
+            <input type="number" step="0.01" max=99.99 min=0 name="precioAlquiler" value="2.99" required/>
             <div>
-            <input type="checkbox" name="enSuscripcion" value="enSuscripcion"/>
+            <input type="checkbox" name="enSuscripcion" value="enSuscripcion" />
             <label for="enSuscripcion">enSuscripcion</label>
             </div>
             <div>
-            <input type="checkbox" name="visible" value="visible"/>
+            <input type="checkbox" name="visible" value="visible" />
             <label for="visible">visible</label>
             </div>
+            <label for="fechaCreacion">Fecha de Salida:</label>
+            <input type="date" name="fechaCreacion" />
+
             <input type="submit" value="Añadir" />
         </fieldset>
     </form>

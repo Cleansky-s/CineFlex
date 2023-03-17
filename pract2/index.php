@@ -1,12 +1,12 @@
 <?php
 
 require_once 'includes/config.php';
+require_once 'includes/vistas/helpers/peliculas.php';
 
 $tituloPagina = 'Portada';
 
-$contenidoPrincipal=<<<EOS
-<h1>Página principal</h1>
-	<p> Aquí está el contenido público, visible para todos los usuarios. </p>
-EOS;
+$contenidoPrincipal="<h1>Lista de todas las peliculas</h1>";
+
+$contenidoPrincipal .= listaPeliculas();
 
 require 'includes/vistas/comun/layout.php';

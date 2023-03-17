@@ -8,6 +8,11 @@ define('RUTA_APP', '/pract2');
 define('RUTA_IMGS', RUTA_APP . '/img');
 define('RUTA_CSS', RUTA_APP . '/css');
 define('RUTA_JS', RUTA_APP . '/js');
+define('RUTA_ALMACEN', implode(DIRECTORY_SEPARATOR, [dirname(__DIR__), 'almacen']));
+define('RUTA_ALMACEN_PORTADAS', RUTA_ALMACEN . '/portadas');
+define('RUTA_ALMACEN_TRAILERS', RUTA_ALMACEN . '/trailers');
+define('RUTA_ALMACEN_PELICULAS', RUTA_ALMACEN . '/peliculas');
+
 define('INSTALADA', true);
 
 // Parámetros de configuración de la BD
@@ -69,6 +74,6 @@ Mensaje::init();
 /* Clases que usan una BD para almacenar el estado */
 /* */
 require_once 'src/BD.php';
+require_once 'src/peliculas/bd/Pelicula.php';
 require_once 'src/usuarios/bd/Usuario.php';
 require_once 'src/mensajes/bd/Mensaje.php';
-require_once 'src/peliculas/bd/Pelicula.php';

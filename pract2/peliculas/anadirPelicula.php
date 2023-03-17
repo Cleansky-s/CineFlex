@@ -5,12 +5,10 @@ require_once '../includes/vistas/helpers/peliculas.php';
 
 verificaLogado(Utils::buildUrl('/proveerPeliculas.php'));
 
-$pelicula = Pelicula::buscaPorId($idPelicula);
-
-$tituloPagina = 'Editar Pelicula';
+$tituloPagina = 'Añadir Pelicula';
 
 if (!esProveedor() && !esAdmin()) {
-    Utils::paginaError(403, $tituloPagina, 'No tienes permisos para editar la pelicula');
+    Utils::paginaError(403, $tituloPagina, 'No tienes permisos para añadir una pelicula');
 }
 
 $crearPeliculaForm = peliculaForm('nuevaPelicula.php');

@@ -65,11 +65,15 @@ function rolesUsuarioForm(Usuario $usuario)
             <h3>{$usuario->nombre}</h3>
             <h4>{$usuario->nombreUsuario}</h4>
             <p>Roles a modificar:</p>
-            <input type="checkbox" id="proveedor" name="proveedor" value="{$proveedorValue}" {$proveedorChecked} />
-            <label for="proveedor"> Proveedor</label>
-            <input type="checkbox" id="moderador" name="moderador" value="{$moderadorValue}" {$moderadorChecked}/>
-            <label for="moderador"> Moderador</label>
-            <div><button type="submit">Actualizar</button></div>
+            <div>
+                <input type="checkbox" id="proveedor" name="proveedor" value="{$proveedorValue}" {$proveedorChecked} />
+                <label for="proveedor"> Proveedor</label>
+            </div>
+            <div>
+                <input type="checkbox" id="moderador" name="moderador" value="{$moderadorValue}" {$moderadorChecked}/>
+                <label for="moderador"> Moderador</label>
+            </div>
+            <button type="submit">Actualizar</button>
         </fieldset>
     </form>
     EOS;

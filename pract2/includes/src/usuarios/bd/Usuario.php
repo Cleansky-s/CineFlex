@@ -116,12 +116,12 @@ class Usuario
         $rs = $conn->query($query);
         if ($rs) {
             $roles = $rs->fetch_all(MYSQLI_ASSOC);
-            $rs->free();
 
             $usuario->roles = [];
             foreach($roles as $rol) {
                 $usuario->roles[] = $rol['rol'];
             }
+            $rs->free();
             return $usuario;
 
         } else {

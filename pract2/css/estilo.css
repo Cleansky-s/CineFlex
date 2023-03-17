@@ -5,12 +5,12 @@
 }
 
 body {
-    background-color: black;
+    background-color: lightgray;
 }
 
 main {
     padding: 10px 2%;
-    background-color: lightgray;
+    background-color: transparent;
 }
 
 header {
@@ -33,7 +33,8 @@ img {
     height: 100%;
 }
 
-.portada {
+.portada-pelis {
+    height: auto;
     width: 200px;
 }
 
@@ -74,6 +75,10 @@ fieldset {
     flex-direction: column;
     width: fit-content;
     padding: 10px 20px;
+}
+
+form input, form button{
+    width: fit-content;
 }
 
 select {

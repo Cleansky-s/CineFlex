@@ -1,27 +1,56 @@
 <?php
 
 class Pelicula {
+
     use MagicProperties;
 
-    // Funciones de acceso a la BD
+    public const EXTENSIONES_PERMITIDAS_IMG = array('gif', 'jpg', 'jpe', 'jpeg', 'png', 'webp', 'avif');
+    public const EXTENSIONES_PERMITIDAS_VIDEO = array(',p4', 'webm' , 'ogg');
 
-    /**
-     * Updatear pelicula
-     */
+    public const GENEROS = [
+        1 => 'action',
+        2 => 'adventure',
+        3 => 'animation',
+        4 => 'comedy',
+        5 => 'drama',
+        6 => 'fantasy',
+        7 => 'historical',
+        8 => 'horror',
+        9 => 'musical',
+        10 => 'noir',
+        11 => 'romance',
+        12 => 'science fiction',
+        13 => 'thriller',
+        14 => 'western'
+    ];
 
-    /**
-     * Borrar pelicula (nunca) / Update campo 'visible'
-     * Soft delete: no se borrara la pelicula de la tabla.
-     * Se pondra a false el campo de visible para que no se pueda ver.
-     * De esta manera los que tienen la pelicula comprada podran seguir viendola.
-     */
-
-
+    
+    public static function crea(
+        $titulo,
+        $descripcion,
+        $urlPortada,
+        $urlTrailer,
+        $urlPelicula,
+        $enSuscripcion,
+        $fechaCreacion,
+        $visible = true,
+        $precioCompra = null,
+        $precioAlquiler = null,
+        $valoracionMedia = 0,
+        $valoracionCuenta = 0,
+        $idProveedor = null,
+        $generos = [],
+        $fechaAnadir = null,
+        $id = null)
+    {
+        $pelicula = new Pelicula($titulo, $descripcion, $urlPortada, $urlTrailer, $urlPelicula, $enSuscripcion, $fechaCreacion, $visible, $precioCompra, $precioAlquiler, $valoracionMedia, $valoracionCuenta, $idProveedor, $generos, $fechaAnadir, $id);
+        return $pelicula->guarda();
+    }
 
     public static function devuelvePeliculas()
     {
         $conn = BD::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM peliculas LIMIT 20");
+        $query = sprintf("SELECT * FROM peliculas LIMIT 10");
         $rs = $conn->query($query);
         $result = [];
         if($rs) {
@@ -45,7 +74,7 @@ class Pelicula {
                     $fila['fechaAnadir'],
                     $fila['id']
                 );
-                $pelicula->cargaGeneros();
+                $pelicula->cargaGeneros($pelicula);
                 $result[] = $pelicula;
             }
             $rs->free();
@@ -85,18 +114,38 @@ class Pelicula {
                     $fila['fechaAnadir'],
                     $fila['id']
                 );
-                $result->cargaGeneros();
+                $result->cargaGeneros($result);
             }
             $rs->free();
         } else {
-            error_log("Error BD ({$conn->errno}): {$conn->error}");
+            error_log("Error buscarporid ({$conn->errno}): {$conn->error}");
         }
         return $result;
     }
 
-    private function cargaGeneros()
+
+    private function cargaGeneros($pelicula)
     {
+        $generos=[];
         
+        $conn = BD::getInstance()->getConexionBd();
+        $query = sprintf("SELECT genero FROM generospelicula WHERE id=%d"
+            , $pelicula->id
+        );
+        $rs = $conn->query($query);
+        if ($rs) {
+            $generos = $rs->fetch_all(MYSQLI_ASSOC);
+
+            $pelicula->generos = [];
+            foreach($generos as $genero) {
+                $pelicula->generos[] = $genero['genero'];
+            }
+            $rs->free();
+            return $pelicula;
+        } else {
+            error_log("Error cargageneros ({$conn->errno}): {$conn->error}");
+        }
+        return false;
     }
 
     public static function buscaPorIdProveedor($idProveedor)
@@ -138,21 +187,7 @@ class Pelicula {
     {
         $result = false;
         $conn = BD::getInstance()->getConexionBd();
-        $sql = `
-        "UPDATE peliculas SET 
-            idProveedor = %d , 
-            titulo = '%s' , 
-            descripcion = '%s' , 
-            urlPortada = '%s' , 
-            urlTrailer = '%s' , 
-            urlPelicula = '%s' , 
-            precioCompra = %s , 
-            precioAlquiler = %s , 
-            enSuscripcion = %s , 
-            fechaCreacion '%s', 
-            visible = %s 
-        WHERE id = %d" `;
-        $query=sprintf( $sql
+        $query=sprintf("UPDATE peliculas SET idProveedor = %d , titulo = '%s' , descripcion = '%s' , urlPortada = '%s' , urlTrailer = '%s' , urlPelicula = '%s' , precioCompra = %s , precioAlquiler = %s , enSuscripcion = %s , fechaCreacion = '%s', visible = %s WHERE id = %d;"
             , !is_null($pelicula->idProveedor) ? $pelicula->idProveedor : 'null'
             , $conn->real_escape_string($pelicula->titulo)
             , $conn->real_escape_string($pelicula->descripcion)
@@ -168,41 +203,30 @@ class Pelicula {
         );
         if ( $conn->query($query) ) {
             $pelicula->id = $conn->insert_id;
-            $result = self::insertaGeneros($pelicula);
-            // $result = self::insertaActores($pelicula);
-            // $result = self::insertaDirectores($pelicula);
+            $result = self::borraGeneros($pelicula);
+            if($result){
+                $result = self::insertaGeneros($pelicula);
+            }
         } else {
-            error_log("Error BD ({$conn->errno}): {$conn->error}");
+            error_log("Error Actualiza ({$conn->errno}): {$conn->error}");
         }
         return $result;
     }
-    /**
-     * Buscar por titulo
-     * WHERE titulo LIKE '%'. $titulo .'%'
-     */
 
-    /**
-     * Buscar por id de proveedor
-     */
-
-    /**
-     * Buscar por genero
-     */
-
-    /**
-     * Filtrar por fecha 
-     * Ejemplo: WHERE fechaCreacion BETWEEN '2018-01-01' AND '2022-01-01'
-     */
-
-    /**
-     * Ordenar por valoracion media
-     * (opcional, seria concatenar ORDER BY)
-     */
     
+    private static function borraGeneros($pelicula)
+    {
+        $conn = BD::getInstance()->getConexionBd();
+        $query = sprintf("DELETE FROM generospelicula WHERE id = %d"
+            , $pelicula->id
+        );
+        if ( ! $conn->query($query) ) {
+            error_log("Error BorraGeneros ({$conn->errno}): {$conn->error}");
+            return false;
+        }
+        return $pelicula;
+    }
 
-    /**
-     * Insertar pelicula
-     */
     private static function inserta($pelicula)
     {
         $result = false;
@@ -222,11 +246,14 @@ class Pelicula {
         );
         if ( $conn->query($query) ) {
             $pelicula->id = $conn->insert_id;
-            $result = self::insertaGeneros($pelicula);
+            $result = self::borraGeneros($pelicula);
+            if($result){
+                $result = self::insertaGeneros($pelicula);
+            }
             // $result = self::insertaActores($pelicula);
             // $result = self::insertaDirectores($pelicula);
         } else {
-            error_log("Error BD ({$conn->errno}): {$conn->error}");
+            error_log("Error inserta ({$conn->errno}): {$conn->error}");
         }
         return $result;
     }
@@ -235,12 +262,12 @@ class Pelicula {
     {
         $conn = BD::getInstance()->getConexionBd();
         foreach($pelicula->generos as $genero) {
-            $query = sprintf("INSERT INTO generospelicula(id, genero) VALUES (%d, '%s')"
+            $query = sprintf("INSERT INTO generospelicula VALUES ( %d , %d )"
                 , $pelicula->id
-                , $conn->real_escape_string($genero)
+                , $genero
             );
             if ( ! $conn->query($query) ) {
-                error_log("Error BD ({$conn->errno}): {$conn->error}");
+                error_log("Error insertageneros ({$conn->errno}): {$conn->error}");
                 return false;
             }
         }
@@ -253,7 +280,7 @@ class Pelicula {
 
     private $id;
 
-    private $proveedor;
+    private $idProveedor;
 
     private $titulo;
     
@@ -329,16 +356,66 @@ class Pelicula {
     public function getId() {
         return $this->id;
     }
-
     public function getIdProveedor() {
         return $this->idProveedor;
     }
+    public function getTitulo() {
+        return $this->titulo;
+    }
+    public function getDescripcion() {
+        return $this->descripcion;
+    }
+    public function getUrlPortada() {
+        return $this->urlPortada;
+    }
+    public function getUrlTrailer() {
+        return $this->urlTrailer;
+    }
+    public function getPrecioCompra() {
+        return $this->precioCompra;
+    }
+    public function getPrecioAlquiler() {
+        return $this->precioAlquiler;
+    }
+    public function getEnSuscripcion() {
+        return $this->enSuscripcion;
+    }
+    public function getValoracionMedia() {
+        return $this->valoracionMedia;
+    }
+    public function getValoracionCuenta() {
+        return $this->valoracionCuenta;
+    }
+    public function getFechaCreacion() {
+        return $this->fechaCreacion;
+    }
+    public function getVisible() {
+        return $this->visible;
+    }
+    public function getFechaAnadir() {
+        return $this->fechaAnadir;
+    }
 
-    public function getProveedor() {
-        if($this->idProveedor) {
-            $this->proveedor = Usuario::buscaPorId($this->idProveedor);
+    public function setId($id) {
+        $this->id = $id;
+    }
+
+    public function setUrlPortada($url) {
+        $this->urlPortada = $url;
+    }
+    public function setUrlTrailer($url) {
+        $this->urlTrailer = $url;
+    }
+    public function setUrlPelicula($url) {
+        $this->urlPelicula = $url;
+    }
+
+    public function tieneGenero($genero)
+    {
+        if ($this->roles == null) {
+            self::cargaGeneros($this);
         }
-        return $this->proveedor;
+        return array_search($genero, $this->generos) !== false;
     }
 
     // Posible no uso de la funcion: cuando se añade una pelicula en principio lo hace un proveedor, por lo que no habria que cambiarla?
@@ -357,6 +434,28 @@ class Pelicula {
             return self::actualiza($this);
         }
         return self::inserta($this);
+    }
+    
+
+    public function print() {
+
+        return <<<EOS
+        <p>{$this->id}</p>
+        <p>{$this->idProveedor} </p>
+        <p>{$this->titulo} </p>
+        <p>{$this->descripcion} </p>
+        <p>{$this->generos} </p>
+        <p>{$this->urlPortada}</p>
+        <p>{$this->urlTrailer} </p>
+        <p>{$this->urlPelicula} </p>
+        <p>{$this->precioCompra} </p>
+        <p>{$this->precioAlquiler} </p>
+        <p>{$this->enSuscripcion}</p>
+        <p>{$this->valoracionMedia} </p>
+        <p>{$this->valoracionCuenta}</p>
+        <p>{$this->fechaCreacion}</p>
+        <p>{$this->visible}</p>
+        EOS;
     }
 
     public function noVisible()

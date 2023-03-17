@@ -6,6 +6,7 @@ require_once '../includes/vistas/helpers/admin.php';
 verificaLogado(Utils::buildUrl('/admin.php'));
 
 $idUsuario = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+
 if (!$idUsuario) {
     Utils::redirige(Utils::buildUrl('/admin.php'));
 }
