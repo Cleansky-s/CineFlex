@@ -12,11 +12,11 @@
 			<?= mostrarProveedor() ?>
 			<?= mostrarAdmin() ?>
 		</ul>
+		<ul class = "nav-profile">
+			<?= mostrarBiblioteca() ?>
+			<?= mostrarLogin() ?>
+		</ul>
 	</nav>
-	<div class = "nav-profile">
-		<?= mostrarBiblioteca() ?>
-		<?= mostrarLogin() ?>
-	</div>
 
 	
 </header>

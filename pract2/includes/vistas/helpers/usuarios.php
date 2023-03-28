@@ -8,12 +8,12 @@ function mostrarLogin()
     if (estaLogado()) {
         $urlLogout = Utils::buildUrl('/logout.php');
         $html = <<<EOS
-        <a href="{$urlLogout}">Logout</a>
+        <li><a href="{$urlLogout}">Logout</a></li>
         EOS;
     } else {
         $urlLogin = Utils::buildUrl('/login.php');
         $html = <<<EOS
-        <a href="{$urlLogin}">Login</a>
+        <li><a href="{$urlLogin}">Login</a><li>
         EOS;
     }
 
@@ -26,7 +26,7 @@ function mostrarBiblioteca()
     if (estaLogado()) {
         $urlLogout = Utils::buildUrl('/biblioteca.php');
         $html = <<<EOS
-        <a href="{$urlLogout}">Biblioteca</a>
+        <li><a href="{$urlLogout}">Biblioteca</a></li>
         EOS;
     }
     return $html;
