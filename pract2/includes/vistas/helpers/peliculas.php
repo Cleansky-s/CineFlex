@@ -7,15 +7,19 @@ function listaPeliculas() {
         $html = '<p>Aun no hay peliculas añadidas</p>';
         return $html;
     }
-    $html = "<div>";
-    foreach($peliculas as $pelicula) {
-        $html .= portadaPelicula($pelicula);
-    }
-    $html .="</div>";
+    $html = listaFilaPeliculas($peliculas);
 
     return $html;
 }
 
+function listaFilaPeliculas($peliculas) {
+    $html = "<div class='row-pelis'><div class='scroll-pelis'>";
+    foreach($peliculas as $pelicula) {
+        $html .= portadaPelicula($pelicula);
+    }
+    $html .="</div></div>";
+    return $html;
+}
 
 function botonEditarPelicula($id) {
     $editaURL = Utils::buildUrl('peliculas/editarPelicula.php', [
@@ -51,9 +55,9 @@ function portadaPelicula($pelicula)
     $linkInfoPeli = Utils::buildUrl('infoPelicula.php', [ 'id' => $pelicula->id ]);
     $rutaPortada = Utils::buildUrl("almacen/portadas/{$pelicula->urlPortada}");
     $html = <<<EOS
-    <a href="{$linkInfoPeli}">
-        <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
-    </a>
+    <div class="portada-peli">
+    <a href="{$linkInfoPeli}"><img src="{$rutaPortada}" alt="{$pelicula->titulo}" /></a>
+    </div>
     EOS;
     return $html;
 }
