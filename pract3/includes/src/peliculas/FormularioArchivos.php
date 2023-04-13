@@ -141,6 +141,10 @@ class FormularioArchivos extends Formulario {
         
         // guardamos siempre.
         $pelicula->guarda();
+        $urlRedireccion = $app->buildUrl('/peliculas/editarPelicula.php',
+            ['id' => $idPelicula, 'archivos' => 'true']);
+        header("Location: {$urlRedireccion}");
+        exit();
 
     }
 }

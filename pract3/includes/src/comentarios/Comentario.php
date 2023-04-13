@@ -8,9 +8,14 @@ use es\ucm\fdi\aw\MagicProperties;
 class Comentario{
     use MagicProperties;
 
+    public static function crea($idUsuario, $idPelicula, $texto, $idPadre) {
+        $comentario = new Comentario($idUsuario, $idPelicula, $texto, $idPadre);
+        return $comentario->guarda();
+    }
+
     public static function devolverBasePorIdPelicula($idPelicula){
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM comentario WHERE idPelicula=%d AND idPadre IS NULL", $idPelicula);
+        $query = sprintf("SELECT * FROM comentarios WHERE idPelicula=%d AND idPadre=0", $idPelicula);
         $rs = $conn->query($query);
         $result = [];
         if($rs){
@@ -27,19 +32,22 @@ class Comentario{
             }
             $rs->free();
         }
+        else {
+            error_log("Error BD ({$conn->errno}): {$conn->error}");
+        }
         return $result;
     }
 
     public static function buscaPorId($idComentario)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM comentario WHERE id=%d", $idComentario);
+        $query = sprintf("SELECT * FROM comentarios WHERE id=%d", $idComentario);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                $result = new Comentario($fila['id'], $fila['idUsuario'], $fila['idPelicula'], $fila['texto'], $fila['idPadre'], $fila['fechaCreacion'], $fila['eliminado']);
+                $result = new Comentario($fila['idUsuario'], $fila['idPelicula'], $fila['texto'], $fila['idPadre'], $fila['fechaCreacion'], $fila['eliminado'], $fila['id']);
             }
             $rs->free();
         } else {
@@ -48,19 +56,28 @@ class Comentario{
         return $result;
     }
 
-    public static function buscaPorIdPadre($idPadre)
+    public static function devolverPorIdPadre($idPadre)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM comentario WHERE id=%d ORDER BY fechaCreacion ASC", $idPadre);
+        $query = sprintf("SELECT * FROM comentarios WHERE id=%d ORDER BY fechaCreacion ASC", $idPadre);
         $rs = $conn->query($query);
-        $result = false;
-        if ($rs) {
-            $fila = $rs->fetch_assoc();
-            if ($fila) {
-                $result = new Comentario($fila['id'], $fila['idUsuario'], $fila['idPelicula'], $fila['texto'], $fila['idPadre'], $fila['fechaCreacion'], $fila['eliminado']);
+        $result = [];
+        if($rs){
+            while($fila = $rs->fetch_assoc()){
+                $comentario = new Comentario(
+                    $fila['idUsuario'],
+                    $fila['idPelicula'],
+                    $fila['texto'],
+                    $fila['idPadre'],
+                    $fila['fechaCreacion'],
+                    $fila['eliminado'],
+                    $fila['id']
+                );
+                $result[] = $comentario;
             }
             $rs->free();
-        } else {
+        }
+        else {
             error_log("Error BD ({$conn->errno}): {$conn->error}");
         }
         return $result;
@@ -70,18 +87,16 @@ class Comentario{
     {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("INSERT INTO comentarios(id, idUsuario, idPelicula, texto, idPadre, fechaCreacion, eliminado) VALUES ('%d', '%d', '%d', '%s', '%d', '%s', '%d')"
-            , !is_null($comentario->id) ? $comentario->id : 'null'
-            , $conn->real_escape_string($comentario->idUsuario)
-            , $conn->real_escape_string($comentario->idPelicula)
+        $query=sprintf("INSERT INTO comentarios (idUsuario, idPelicula, texto, idPadre, eliminado) VALUES ( %d, %d, '%s', %d, %d )"
+            , $comentario->idUsuario
+            , $comentario->idPelicula
             , $conn->real_escape_string($comentario->texto)
             , !is_null($comentario->idPadre) ? $comentario->idPadre : 'null'
-            , $conn->real_escape_string($comentario->fechaCreacion)
-            , $conn->real_escape_string($comentario->eliminado)
+            , $comentario->eliminado ? true : false
         );
         if ( $conn->query($query) ) {
             $comentario->id = $conn->insert_id;
-            $resul = true;
+            $result = true;
         } else {
             error_log("Error BD ({$conn->errno}): {$conn->error}");
         }
@@ -92,8 +107,9 @@ class Comentario{
     {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("UPDATE comentarios U SET eliminado = '%s' WHERE U.id=%d"
-            , $conn->real_escape_string($comentario->eliminado)
+        $query=sprintf("UPDATE comentarios U SET texto='%s' , eliminado=%d WHERE U.id=%d"
+            , $conn->real_escape_string($comentario->texto)
+            , $comentario->eliminado
             , $comentario->id
         );
         if ( $conn->query($query) ) {
@@ -142,7 +158,7 @@ class Comentario{
 
     private $eliminado;
 
-    private function __construct($idUsuario, $idPelicula, $texto, $idPadre, $fechaCreacion, $id = null)
+    private function __construct($idUsuario, $idPelicula, $texto, $idPadre, $fechaCreacion=null, $eliminado=false, $id = null)
     {
         $this->id = $id;
         $this->idUsuario = $idUsuario;
@@ -150,7 +166,7 @@ class Comentario{
         $this->texto = $texto;
         $this->idPadre = $idPadre;
         $this->fechaCreacion = $fechaCreacion;
-        $this->eliminado = '0';
+        $this->eliminado = $eliminado;
     }
 
     public function getId()

@@ -166,6 +166,10 @@ class FormularioUpdatePelicula extends Formulario {
 
                 $pelicula->guarda();
 
+                $urlRedireccion = \es\ucm\fdi\aw\Aplicacion::getInstance()->buildUrl('/peliculas/editarPelicula.php',
+                    ['id' => $idPelicula ]);
+                header("Location: {$urlRedireccion}");
+                exit();
             }
             else {
                 $this->errores[] = "El titulo ya existe.";
