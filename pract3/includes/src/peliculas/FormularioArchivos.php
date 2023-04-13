@@ -11,7 +11,6 @@ class FormularioArchivos extends Formulario {
     public function __construct() {
         parent::__construct('formPelicula', 
         [
-            'urlRedireccion' => Aplicacion::getInstance()->resuelve('/proveerPeliculas.php'),
             'enctype'=>'multipart/form-data'
         ]);
     }
@@ -89,9 +88,9 @@ class FormularioArchivos extends Formulario {
             else {
                 $tmp_name = $_FILES['urlPortada']['tmp_name'];
                 $fichero = "{$pelicula->id}.{$extension}";
-                $rutaPortada = $app->buildUrl(RUTA_ALMACEN_PORTADAS . "/{$fichero}");
+                $rutaPortada = dirname(__DIR__, 3)."/almacen/portadas/{$fichero}";
                 if(!move_uploaded_file($tmp_name, $rutaPortada)){
-                    $this->errores['urlPortada'] = "Archivo no valido";
+                    $this->errores['urlPortada'] = "Archivo no valido, moviendo {$tmp_name} a {$rutaPortada}";
                 }
                 else{
                     $pelicula->urlPortada = $fichero;
@@ -108,7 +107,7 @@ class FormularioArchivos extends Formulario {
             else {
                 $tmp_name = $_FILES['urlTrailer']['tmp_name'];
                 $fichero = "{$pelicula->id}.{$extension}";
-                $rutaTrailer = $app->buildUrl(RUTA_ALMACEN_TRAILERS . "/{$fichero}");
+                $rutaTrailer = dirname(__DIR__, 3)."/almacen/trailers/{$fichero}";
                 if(!move_uploaded_file($tmp_name, $rutaTrailer)){
                     $this->errores['urlTrailer'] = "Archivo no valido";
                 }
@@ -130,7 +129,7 @@ class FormularioArchivos extends Formulario {
             else {
                 $tmp_name = $_FILES['urlPelicula']['tmp_name'];
                 $fichero = "{$pelicula->id}.{$extension}";
-                $rutaPelicula = $app->buildUrl(RUTA_ALMACEN_PELICULAS . "/{$fichero}");
+                $rutaPelicula = dirname(__DIR__, 3)."/almacen/peliculas/{$fichero}";
                 if(!move_uploaded_file($tmp_name, $rutaPelicula)){
                     $this->errores['urlPelicula'] = "Archivo no valido";
                 }

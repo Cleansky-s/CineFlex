@@ -9,10 +9,7 @@ use es\ucm\fdi\aw\peliculas\Pelicula;
 class FormularioAddPelicula extends Formulario {
 
     public function __construct() {
-        parent::__construct('formPelicula', 
-        [
-            'urlRedireccion' => Aplicacion::getInstance()->resuelve('/proveerPeliculas.php')
-        ]);
+        parent::__construct('formPelicula');
     }
 
     protected function generaCamposFormulario(&$datos)
@@ -147,7 +144,7 @@ class FormularioAddPelicula extends Formulario {
             if(!$pelicula) {
                 $pelicula = Pelicula::crea($titulo, $descripcion, "tmp", "tmp", "tmp", $enSuscripcion, $fechaCreacion, $visible, $precioCompra, $precioAlquiler, 0, 0, $idProveedor, $generos);
                 
-                $urlRedireccion = \es\ucm\fdi\aw\Aplicacion::getInstance()->buildUrl('/editarPelicula.php',
+                $urlRedireccion = \es\ucm\fdi\aw\Aplicacion::getInstance()->buildUrl('/peliculas/editarPelicula.php',
                     ['id' => $pelicula->id, 'archivos' => 'true']);
                 header("Location: {$urlRedireccion}");
                 exit();

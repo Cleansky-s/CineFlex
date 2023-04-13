@@ -35,7 +35,7 @@ class Usuario
     public static function devolverUsuarios() 
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM Usuarios");
+        $query = sprintf("SELECT * FROM usuarios");
         $rs = $conn->query($query);
         $result = [];
         if($rs) {
@@ -53,7 +53,7 @@ class Usuario
     public static function getRoleTitles()
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM Roles ORDER BY id ASC");
+        $query = sprintf("SELECT * FROM roles ORDER BY id ASC");
         $rs = $conn->query($query);
         $roles = [];
         if($rs) {
@@ -69,7 +69,7 @@ class Usuario
     public static function buscaUsuario($nombreUsuario)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM Usuarios U WHERE U.nombreUsuario='%s'", $conn->real_escape_string($nombreUsuario));
+        $query = sprintf("SELECT * FROM usuarios U WHERE U.nombreUsuario='%s'", $conn->real_escape_string($nombreUsuario));
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
@@ -87,7 +87,7 @@ class Usuario
     public static function buscaPorId($idUsuario)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM Usuarios WHERE id=%d", $idUsuario);
+        $query = sprintf("SELECT * FROM usuarios WHERE id=%d", $idUsuario);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
@@ -112,7 +112,7 @@ class Usuario
         $roles=[];
             
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT RU.rol FROM RolesUsuario RU WHERE RU.usuario=%d"
+        $query = sprintf("SELECT RU.rol FROM rolesusuario RU WHERE RU.usuario=%d"
             , $usuario->id
         );
         $rs = $conn->query($query);
@@ -136,7 +136,7 @@ class Usuario
     {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("INSERT INTO Usuarios(nombreUsuario, nombre, password) VALUES ('%s', '%s', '%s')"
+        $query=sprintf("INSERT INTO usuarios(nombreUsuario, nombre, password) VALUES ('%s', '%s', '%s')"
             , $conn->real_escape_string($usuario->nombreUsuario)
             , $conn->real_escape_string($usuario->nombre)
             , $conn->real_escape_string($usuario->password)
@@ -154,7 +154,7 @@ class Usuario
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
         foreach($usuario->roles as $rol) {
-            $query = sprintf("INSERT INTO RolesUsuario(usuario, rol) VALUES (%d, %d)"
+            $query = sprintf("INSERT INTO rolesusuario(usuario, rol) VALUES (%d, %d)"
                 , $usuario->id
                 , $rol
             );
@@ -170,7 +170,7 @@ class Usuario
     {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("UPDATE Usuarios U SET nombreUsuario = '%s', nombre='%s', password='%s' WHERE U.id=%d"
+        $query=sprintf("UPDATE usuarios U SET nombreUsuario = '%s', nombre='%s', password='%s' WHERE U.id=%d"
             , $conn->real_escape_string($usuario->nombreUsuario)
             , $conn->real_escape_string($usuario->nombre)
             , $conn->real_escape_string($usuario->password)
@@ -215,7 +215,7 @@ class Usuario
          * $result = self::borraRoles($usuario) !== false;
          */
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("DELETE FROM Usuarios U WHERE U.id = %d"
+        $query = sprintf("DELETE FROM usuarios U WHERE U.id = %d"
             , $idUsuario
         );
         if ( ! $conn->query($query) ) {

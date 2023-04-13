@@ -3,7 +3,7 @@
 /**
  * Parámetros de conexión a la BD
  */
-define('BD_HOST', 'localhost');
+define('BD_HOST', 'vm06.db.swarm.test');
 define('BD_NAME', 'cineflex');
 define('BD_USER', 'cineflex');
 define('BD_PASS', 'cineflex');
@@ -12,12 +12,12 @@ define('BD_PASS', 'cineflex');
  * Parámetros de configuración utilizados para generar las URLs y las rutas a ficheros en la aplicación
  */
 define('RAIZ_APP', __DIR__);
-define('RUTA_APP', '/CineFlex/pract3');
+define('RUTA_APP', '/pract3');
 define('RUTA_IMGS', RUTA_APP.'img/');
 define('RUTA_CSS', RUTA_APP.'css/');
 define('RUTA_JS', RUTA_APP.'js/');
 
-define('RUTA_ALMACEN', 'almacen');
+define('RUTA_ALMACEN', '/almacen');
 define('RUTA_ALMACEN_PORTADAS', RUTA_ALMACEN . '/portadas');
 define('RUTA_ALMACEN_TRAILERS', RUTA_ALMACEN . '/trailers');
 define('RUTA_ALMACEN_PELICULAS', RUTA_ALMACEN . '/peliculas');
@@ -72,7 +72,7 @@ $app = \es\ucm\fdi\aw\Aplicacion::getInstance();
 $app->init(array('host'=>BD_HOST, 'bd'=>BD_NAME, 'user'=>BD_USER, 'pass'=>BD_PASS), RUTA_APP, RAIZ_APP);
 
 if (! INSTALADA) {
-	$app->paginaError(502, 'Error', 'Oops', 'La aplicación no está configurada. Tienes que modificar el fichero config.php');
+$app->paginaError(502, 'Error', 'Oops', 'La aplicación no está configurada. Tienes que modificar el fichero config.php');
 }
 
 /**

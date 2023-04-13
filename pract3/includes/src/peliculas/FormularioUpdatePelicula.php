@@ -10,10 +10,7 @@ class FormularioUpdatePelicula extends Formulario {
 
 
     public function __construct() {
-        parent::__construct('formPelicula', 
-        [
-            'urlRedireccion' => Aplicacion::getInstance()->resuelve('/proveerPeliculas.php')
-        ]);
+        parent::__construct('formPelicula');
     }
 
     protected function generaCamposFormulario(&$datos)
