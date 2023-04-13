@@ -26,6 +26,7 @@ class Comentario{
                     $fila['texto'],
                     $fila['idPadre'],
                     $fila['fechaCreacion'],
+                    $fila['eliminado'],
                     $fila['id']
                 );
                 $result[] = $comentario;
@@ -47,7 +48,15 @@ class Comentario{
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                $result = new Comentario($fila['idUsuario'], $fila['idPelicula'], $fila['texto'], $fila['idPadre'], $fila['fechaCreacion'], $fila['eliminado'], $fila['id']);
+                $result = 
+                new Comentario(
+                    $fila['idUsuario'],
+                    $fila['idPelicula'], 
+                    $fila['texto'], 
+                    $fila['idPadre'], 
+                    $fila['fechaCreacion'], 
+                    $fila['eliminado'], 
+                    $fila['id']);
             }
             $rs->free();
         } else {
@@ -120,6 +129,21 @@ class Comentario{
         return $result;
     }
 
+    public static function softDelete($idComentario)
+    {
+        $result = false;
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query=sprintf("UPDATE comentarios SET eliminado=1 WHERE id=%d"
+            , $idComentario
+        );
+        if ( $conn->query($query) ) {
+        } else {
+            error_log("Error BD ({$conn->errno}): {$conn->error}");
+        }
+        
+        return $result;
+    }
+
     private static function borra($comentario)
     {
         return self::borraPorId($comentario->id);
@@ -134,7 +158,7 @@ class Comentario{
          * $result = self::borraRoles($usuario) !== false;
          */
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("DELETE FROM comentarios U WHERE U.id = %d"
+        $query = sprintf("DELETE FROM comentarios WHERE id = %d"
             , $idComentario
         );
         if ( ! $conn->query($query) ) {
@@ -174,12 +198,12 @@ class Comentario{
         return $this->id;
     }
 
-    public function getidUsuario()
+    public function getIdUsuario()
     {
         return $this->idUsuario;
     }
 
-    public function getidPelicula()
+    public function getIdPelicula()
     {
         return $this->idPelicula;
     }
@@ -199,6 +223,10 @@ class Comentario{
         return $this->fechaCreacion;
     }
 
+    public function getEliminado()
+    {
+        return $this->eliminado;
+    }
     
     public function guarda()
     {

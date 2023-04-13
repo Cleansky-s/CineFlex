@@ -2,6 +2,7 @@
 
 use es\ucm\fdi\aw\Aplicacion;
 use es\ucm\fdi\aw\comentarios\Comentario;
+use es\ucm\fdi\aw\comentarios\FormularioBorrarComentario;
 use es\ucm\fdi\aw\comentarios\FormularioComentario;
 use es\ucm\fdi\aw\usuarios\Usuario;
 
@@ -9,19 +10,35 @@ function muestraComentario($comentario) {
 
     $app = Aplicacion::getInstance();
     $usuario = Usuario::buscaPorId($comentario->idUsuario);
+    $idUsuario = $app->idUsuario();
 
     $idRespuesta = $comentario->idPadre ?? $comentario->id;
 
-    // hacer un comentario
+    if($comentario->eliminado==1) {
+        return <<<EOS
+        <div class="comentario">
+        <h3>Eliminado</h3>
+        <p>Este comentario ha sido eliminado</p>
+        </div>
+        EOS;
+    }
+        
+
     $html = <<<EOS
         <div class="comentario">
             <h3>{$usuario->nombreUsuario}</h3>
             <p>{$comentario->fechaCreacion}</p>
             <p>{$comentario->texto}</p>
-            <button>Responder</button>
-        </div>
     EOS;
+    if($idUsuario == $comentario->idUsuario){
+        $formBorra = new FormularioBorrarComentario($comentario->id);
+        $htmlForm = $formBorra->gestiona();
+        $html .= $htmlForm;
+    }
+    // hacer un comentario
+    
 
+    $html .= "</div>";
     return $html;
 }
 
@@ -53,11 +70,17 @@ function seccionComentarios($idPelicula)
     $comentariosBase = Comentario::devolverBasePorIdPelicula($idPelicula, null);
 
     foreach($comentariosBase as $comentarioBase) {
-        $html .= "<li>";
-        $html .= muestraComentario($comentarioBase);
+        $respuestas = seccionRespuestas($comentarioBase->idPadre);
 
-        $html .= seccionRespuestas($comentarioBase->idPadre);
-        $html .= "</li>";
+        if($comentarioBase->eliminado==1 && $respuestas==""){
+            $comentarioBase->borrate();
+        }
+        else {
+            $html .= "<li>";
+            $html .= muestraComentario($comentarioBase);
+            $html .= $respuestas;
+            $html .= "</li>";
+        }
     }
 
     $html .= "</ul></div>";

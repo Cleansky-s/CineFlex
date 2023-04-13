@@ -2,10 +2,10 @@
 -- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Apr 07, 2023 at 02:36 AM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.2.0
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 14-04-2023 a las 01:14:03
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,20 +17,20 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cineflex`
+-- Base de datos: `cineflex`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `alquiler`
+-- Estructura de tabla para la tabla `alquiler`
 --
 
 CREATE TABLE `alquiler` (
   `id` int(11) NOT NULL,
   `idUsuario` int(11) NOT NULL,
   `idPelicula` int(11) NOT NULL,
-  `fechaCompra` datetime NOT NULL,
+  `fechaCompra` datetime NOT NULL DEFAULT current_timestamp(),
   `precio` decimal(4,2) NOT NULL,
   `fechaMax` datetime NOT NULL,
   `activo` tinyint(1) NOT NULL
@@ -39,7 +39,7 @@ CREATE TABLE `alquiler` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `comentarios`
+-- Estructura de tabla para la tabla `comentarios`
 --
 
 CREATE TABLE `comentarios` (
@@ -47,27 +47,30 @@ CREATE TABLE `comentarios` (
   `idUsuario` int(11) NOT NULL,
   `idPelicula` int(11) NOT NULL,
   `texto` varchar(255) NOT NULL,
-  `idPadre` int(11) DEFAULT NULL
+  `idPadre` int(11) DEFAULT NULL,
+  `spoiler` tinyint(1) NOT NULL,
+  `fechaCreacion` datetime NOT NULL DEFAULT current_timestamp(),
+  `eliminado` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `compras`
+-- Estructura de tabla para la tabla `compras`
 --
 
 CREATE TABLE `compras` (
   `id` int(11) NOT NULL,
   `idUsuario` int(11) NOT NULL,
   `idPelicula` int(11) NOT NULL,
-  `fecha` datetime NOT NULL,
+  `fecha` datetime NOT NULL DEFAULT current_timestamp(),
   `precio` decimal(4,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `generos`
+-- Estructura de tabla para la tabla `generos`
 --
 
 CREATE TABLE `generos` (
@@ -78,7 +81,7 @@ CREATE TABLE `generos` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `generospelicula`
+-- Estructura de tabla para la tabla `generospelicula`
 --
 
 CREATE TABLE `generospelicula` (
@@ -89,7 +92,7 @@ CREATE TABLE `generospelicula` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `peliculas`
+-- Estructura de tabla para la tabla `peliculas`
 --
 
 CREATE TABLE `peliculas` (
@@ -113,7 +116,7 @@ CREATE TABLE `peliculas` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `roles`
+-- Estructura de tabla para la tabla `roles`
 --
 
 CREATE TABLE `roles` (
@@ -124,7 +127,7 @@ CREATE TABLE `roles` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `rolesusuario`
+-- Estructura de tabla para la tabla `rolesusuario`
 --
 
 CREATE TABLE `rolesusuario` (
@@ -135,7 +138,7 @@ CREATE TABLE `rolesusuario` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usuarios`
+-- Estructura de tabla para la tabla `usuarios`
 --
 
 CREATE TABLE `usuarios` (
@@ -148,7 +151,7 @@ CREATE TABLE `usuarios` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `valoraciones`
+-- Estructura de tabla para la tabla `valoraciones`
 --
 
 CREATE TABLE `valoraciones` (
@@ -159,7 +162,7 @@ CREATE TABLE `valoraciones` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Triggers `valoraciones`
+-- Disparadores `valoraciones`
 --
 DELIMITER $$
 CREATE TRIGGER `valoracion_insert` AFTER INSERT ON `valoraciones` FOR EACH ROW UPDATE `peliculas`
@@ -170,11 +173,11 @@ $$
 DELIMITER ;
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `alquiler`
+-- Indices de la tabla `alquiler`
 --
 ALTER TABLE `alquiler`
   ADD PRIMARY KEY (`id`),
@@ -183,16 +186,17 @@ ALTER TABLE `alquiler`
   ADD KEY `fechaCompra` (`fechaCompra`);
 
 --
--- Indexes for table `comentarios`
+-- Indices de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
   ADD PRIMARY KEY (`id`),
   ADD KEY `Comentarios_Id_usuario` (`idUsuario`),
   ADD KEY `Comentarios_Id_pelicula` (`idPelicula`),
-  ADD KEY `Comentarios_Id_padre` (`idPadre`);
+  ADD KEY `Comentarios_Id_padre` (`idPadre`),
+  ADD KEY `fechaCreacion` (`fechaCreacion`);
 
 --
--- Indexes for table `compras`
+-- Indices de la tabla `compras`
 --
 ALTER TABLE `compras`
   ADD PRIMARY KEY (`id`),
@@ -201,143 +205,142 @@ ALTER TABLE `compras`
   ADD KEY `fecha` (`fecha`);
 
 --
--- Indexes for table `generos`
+-- Indices de la tabla `generos`
 --
 ALTER TABLE `generos`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `generospelicula`
+-- Indices de la tabla `generospelicula`
 --
 ALTER TABLE `generospelicula`
   ADD PRIMARY KEY (`id`,`genero`),
   ADD KEY `GenerosPelicula_idgenero` (`genero`);
 
 --
--- Indexes for table `peliculas`
+-- Indices de la tabla `peliculas`
 --
 ALTER TABLE `peliculas`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `titulo` (`titulo`),
   ADD KEY `idProveedor` (`idProveedor`),
-  ADD KEY `enSuscripcion` (`enSuscripcion`),
   ADD KEY `valoracionMedia` (`valoracionMedia`),
-  ADD KEY `fechaCreacion` (`fechaCreacion`);
+  ADD KEY `fechaCreacion` (`fechaCreacion`),
+  ADD KEY `enSuscripcion` (`enSuscripcion`) USING BTREE;
 
 --
--- Indexes for table `roles`
+-- Indices de la tabla `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `rolesusuario`
+-- Indices de la tabla `rolesusuario`
 --
 ALTER TABLE `rolesusuario`
   ADD PRIMARY KEY (`usuario`,`rol`),
   ADD KEY `rol` (`rol`);
 
 --
--- Indexes for table `usuarios`
+-- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `nombreUsuario` (`nombreUsuario`);
 
 --
--- Indexes for table `valoraciones`
+-- Indices de la tabla `valoraciones`
 --
 ALTER TABLE `valoraciones`
   ADD PRIMARY KEY (`idUsuario`,`idPelicula`),
   ADD KEY `Valoraciones_Id_pelicula` (`idPelicula`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `alquiler`
+-- AUTO_INCREMENT de la tabla `alquiler`
 --
 ALTER TABLE `alquiler`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `comentarios`
+-- AUTO_INCREMENT de la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `compras`
+-- AUTO_INCREMENT de la tabla `compras`
 --
 ALTER TABLE `compras`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `generos`
+-- AUTO_INCREMENT de la tabla `generos`
 --
 ALTER TABLE `generos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `peliculas`
+-- AUTO_INCREMENT de la tabla `peliculas`
 --
 ALTER TABLE `peliculas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `roles`
+-- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `usuarios`
+-- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- Constraints for dumped tables
+-- Restricciones para tablas volcadas
 --
 
 --
--- Constraints for table `alquiler`
+-- Filtros para la tabla `alquiler`
 --
 ALTER TABLE `alquiler`
   ADD CONSTRAINT `Alquiler_Id_pelicula` FOREIGN KEY (`idPelicula`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `Alquiler_Id_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `comentarios`
+-- Filtros para la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
-  ADD CONSTRAINT `Comentarios_Id_padre` FOREIGN KEY (`idPadre`) REFERENCES `comentarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `Comentarios_Id_pelicula` FOREIGN KEY (`idPelicula`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `Comentarios_Id_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `compras`
+-- Filtros para la tabla `compras`
 --
 ALTER TABLE `compras`
   ADD CONSTRAINT `Compras_Id_pelicula` FOREIGN KEY (`idPelicula`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `Compras_Id_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `generospelicula`
+-- Filtros para la tabla `generospelicula`
 --
 ALTER TABLE `generospelicula`
   ADD CONSTRAINT `GenerosPeliculas_IdGenero` FOREIGN KEY (`genero`) REFERENCES `generos` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `rolesusuario`
+-- Filtros para la tabla `rolesusuario`
 --
 ALTER TABLE `rolesusuario`
   ADD CONSTRAINT `RolesUsuario_rol` FOREIGN KEY (`rol`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `RolesUsuario_usuario` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `valoraciones`
+-- Filtros para la tabla `valoraciones`
 --
 ALTER TABLE `valoraciones`
   ADD CONSTRAINT `Valoraciones_Id_pelicula` FOREIGN KEY (`idPelicula`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

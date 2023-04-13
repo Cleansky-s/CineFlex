@@ -32,7 +32,7 @@ class FormularioComentario extends Formulario {
             $usuarioRespuesta = Usuario::buscaPorId($this->idRespuesta);
 
             if(!$usuarioRespuesta) {
-                $app->paginaError(502, 'Error', 'Oops', 'La aplicación no está configurada. Tienes que modificar el fichero config.php');
+                $app->paginaError(502, 'Error', 'Oops', 'El usuario de respuesta del comentario no existe.');
             }
 
             $idPadre = $usuarioRespuesta->idPadre;
