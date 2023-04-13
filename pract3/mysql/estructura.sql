@@ -218,9 +218,9 @@ ALTER TABLE `generospelicula`
 --
 ALTER TABLE `peliculas`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `enSuscripcion` (`enSuscripcion`),
   ADD UNIQUE KEY `titulo` (`titulo`),
   ADD KEY `idProveedor` (`idProveedor`),
+  ADD KEY `enSuscripcion` (`enSuscripcion`),
   ADD KEY `valoracionMedia` (`valoracionMedia`),
   ADD KEY `fechaCreacion` (`fechaCreacion`);
 
