@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-04-2023 a las 01:14:03
+-- Tiempo de generación: 14-04-2023 a las 16:22:12
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 8.2.0
 
@@ -165,10 +165,7 @@ CREATE TABLE `valoraciones` (
 -- Disparadores `valoraciones`
 --
 DELIMITER $$
-CREATE TRIGGER `valoracion_insert` AFTER INSERT ON `valoraciones` FOR EACH ROW UPDATE `peliculas`
-    SET `peliculas`.`valoracionMedia` = (`peliculas`.`valoracionMedia`*`peliculas`.`valoracionCuenta` + `valoracion`) / (`peliculas`.`valoracionCuenta` +1),
-    	`peliculas`.`valoracionCuenta` = (`peliculas`.`valoracionCuenta`+1)
-	WHERE `peliculas`.`id` = `idPelicula`
+CREATE TRIGGER `valoracion_insert` AFTER INSERT ON `valoraciones` FOR EACH ROW UPDATE peliculas P SET P.valoracionMedia = (P.valoracionMedia*P.valoracionCuenta + NEW.valoracion) / (P.valoracionCuenta +1), P.valoracionCuenta = (P.valoracionCuenta+1) WHERE P.id = NEW.idPelicula
 $$
 DELIMITER ;
 
