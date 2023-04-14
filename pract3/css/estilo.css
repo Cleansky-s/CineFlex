@@ -56,6 +56,11 @@ img {
 	list-style: none;
 }
 
+.deshabilitado {
+	pointer-events: none;
+	text-decoration: none;
+	cursor: default;
+}
 
 .nav-profile li{
 	display: inline-block;

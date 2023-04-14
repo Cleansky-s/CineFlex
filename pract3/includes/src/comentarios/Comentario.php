@@ -15,7 +15,7 @@ class Comentario{
 
     public static function devolverBasePorIdPelicula($idPelicula){
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM comentarios WHERE idPelicula=%d AND idPadre=0", $idPelicula);
+        $query = sprintf("SELECT * FROM comentarios WHERE idPelicula=%d AND idPadre=0 ORDER BY fechaCreacion DESC", $idPelicula);
         $rs = $conn->query($query);
         $result = [];
         if($rs){
@@ -68,7 +68,7 @@ class Comentario{
     public static function devolverPorIdPadre($idPadre)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM comentarios WHERE id=%d ORDER BY fechaCreacion ASC", $idPadre);
+        $query = sprintf("SELECT * FROM comentarios WHERE idPadre=%d ORDER BY fechaCreacion ASC", $idPadre);
         $rs = $conn->query($query);
         $result = [];
         if($rs){

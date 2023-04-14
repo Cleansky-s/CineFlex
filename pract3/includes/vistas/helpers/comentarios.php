@@ -12,8 +12,6 @@ function muestraComentario($comentario) {
     $usuario = Usuario::buscaPorId($comentario->idUsuario);
     $idUsuario = $app->idUsuario();
 
-    $idRespuesta = $comentario->idPadre ?? $comentario->id;
-
     if($comentario->eliminado==1) {
         return <<<EOS
         <div class="comentario">
@@ -34,6 +32,17 @@ function muestraComentario($comentario) {
         $formBorra = new FormularioBorrarComentario($comentario->id);
         $htmlForm = $formBorra->gestiona();
         $html .= $htmlForm;
+    }
+    if($idUsuario!=''){
+        $formResponde = new FormularioComentario($comentario->id);
+        $htmlForm = $formResponde->gestiona();
+        $idUnico = "respuesta-{$comentario->id}";
+        $html .= <<<EOS
+        <button onclick="muestraFormularioRespuesta('$idUnico')">Responde</button>
+        EOS;
+        $html .= "<div id='$idUnico' style='display: none;'>";
+        $html .= $htmlForm;
+        $html .= "</div>";
     }
     // hacer un comentario
     
@@ -58,10 +67,19 @@ function seccionComentarios($idPelicula)
     }
 
     $html = <<<EOS
+    <script>
+    function muestraFormularioRespuesta(id) {
+        var x = document.getElementById(id);
+        if (x.style.display === "none") {
+            x.style.display = "block";
+        } else {
+            x.style.display = "none";
+        }
+    }
+    </script>
     <div id="comentarios" class="seccion-comentarios">
     <h2>Comentarios</h2>
     $htmlForm
-    <ul>
     EOS;
 
     /** Decision de hacer los comentarios de 1 nivel, el comentario base y las respuestas.
@@ -69,44 +87,48 @@ function seccionComentarios($idPelicula)
      */
     $comentariosBase = Comentario::devolverBasePorIdPelicula($idPelicula, null);
 
-    foreach($comentariosBase as $comentarioBase) {
-        $respuestas = seccionRespuestas($comentarioBase->idPadre);
-
-        if($comentarioBase->eliminado==1 && $respuestas==""){
-            $comentarioBase->borrate();
+    if(count($comentariosBase) > 0) {
+        $html .= "<ul>";
+        foreach($comentariosBase as $comentarioBase) {
+            $respuestas = seccionRespuestas($comentarioBase->id);
+    
+            if($comentarioBase->eliminado==1 && $respuestas==""){
+                $comentarioBase->borrate();
+            }
+            else {
+                $html .= "<li>";
+                $html .= muestraComentario($comentarioBase);
+                $html .= $respuestas;
+                $html .= "</li>";
+            }
         }
-        else {
-            $html .= "<li>";
-            $html .= muestraComentario($comentarioBase);
-            $html .= $respuestas;
-            $html .= "</li>";
-        }
+        $html .= "</ul>";
+    }
+    else {
+        $html .= "<h3>Se el primero en comentar!!</h3>";
     }
 
-    $html .= "</ul></div>";
+    $html .= "</div>";
     return $html;
 }
 
 function seccionRespuestas($idPadre) {
     $app = Aplicacion::getInstance();
 
-    $comentariosHijo = Comentario::devolverPorIdPadre($idPadre);
-    if(count($comentariosHijo) == 0) {
+    $respuestas = Comentario::devolverPorIdPadre($idPadre);
+    if(count($respuestas) == 0) {
         return "";
     }
 
     // hacer que sea expandible
     $html = <<<EOS
-        <button class="btn-expandir">Expandir respuestas</button>
         <div class="comentarios-respuesta">
         <ul>
     EOS;
 
-    foreach($comentariosHijo as $respuesta) {
+    foreach($respuestas as $respuesta) {
         $html .= "<li>";
         $html .= muestraComentario($respuesta);
-
-        //$html .= seccionRespuestas($comentarioBase);
         $html .= "</li>";
     }
 

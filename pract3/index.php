@@ -9,6 +9,5 @@ $contenidoPrincipal="<h1>Lista de todas las peliculas</h1>";
 
 $contenidoPrincipal .= listaPeliculas();
 
-
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];
 $app->generaVista('/plantillas/plantilla.php', $params);

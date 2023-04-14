@@ -26,8 +26,8 @@ class FormularioValoracion extends Formulario {
 
         $htmlForm = <<<EOS
         $htmlErroresGlobales
-        <input type="hidden" name="idProveedor" value="{$idUsuario} "/>
-        <input type="hidden" name="idProveedor" value="{$idPelicula} "/>
+        <input type="hidden" name="idUsuario" value="{$idUsuario} "/>
+        <input type="hidden" name="idPelicula" value="{$idPelicula} "/>
         <fieldset class="valoracion-form">
             <div class="valoracion-select">
                 <label for="valoracion">Valoracion:</label>
@@ -60,9 +60,8 @@ class FormularioValoracion extends Formulario {
         $idUsuario = $datos['idUsuario'];
         $idPelicula = $datos['idPelicula'];
 
-        $texto = filter_var($datos['texto'], FILTER_SANITIZE_SPECIAL_CHARS);
-
-        $texto = filter_var($datos['texto'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $texto = trim($datos['texto']);
+        $texto = filter_var($texto, FILTER_SANITIZE_SPECIAL_CHARS);
         if ( mb_strlen($texto) > 255) {
             $this->errores['texto'] = 'La valoracion no puede superar los 255 caracteres';
         }

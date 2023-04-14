@@ -16,7 +16,7 @@ class FormularioComentario extends Formulario {
         $urlRedireccion = Aplicacion::getInstance()->buildUrl('/infoPelicula.php', ['id' => $idPelicula]);
         $urlRedireccion .= "#comentarios";
         parent::__construct('formComentario', ["urlRedireccion" => $urlRedireccion]);
-        
+
         $this->idRespuesta=$idRespuesta;
     }
 
@@ -29,13 +29,14 @@ class FormularioComentario extends Formulario {
         $usuario = Usuario::buscaPorId($idUsuario);
 
         if($this->idRespuesta!=null) {
-            $usuarioRespuesta = Usuario::buscaPorId($this->idRespuesta);
+            $comentarioRespuesta = Comentario::buscaPorId($this->idRespuesta);
 
-            if(!$usuarioRespuesta) {
-                $app->paginaError(502, 'Error', 'Oops', 'El usuario de respuesta del comentario no existe.');
+            if(!$comentarioRespuesta) {
+                $app->paginaError(502, 'Error', 'Oops', 'El comentario al que se responde no existe.');
             }
+            $usuarioRespuesta = Usuario::buscaPorId($comentarioRespuesta->idUsuario);
 
-            $idPadre = $usuarioRespuesta->idPadre;
+            $idPadre = $comentarioRespuesta->idPadre==0 ? $comentarioRespuesta->id : $comentarioRespuesta->idPadre;
             $prefijoRespuesta = "@{$usuarioRespuesta->nombreUsuario}";
 
             $texto = $datos['texto'] ?? $prefijoRespuesta;
@@ -76,11 +77,13 @@ class FormularioComentario extends Formulario {
         $idPelicula = $datos['idPelicula'];
         $idPadre = $datos['idPadre'];
 
-        $texto = filter_var($datos['texto'], FILTER_SANITIZE_SPECIAL_CHARS);
-
-        $texto = filter_var($datos['texto'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $texto = trim($datos['texto']);
+        $texto = filter_var($texto, FILTER_SANITIZE_SPECIAL_CHARS);
+        if ( mb_strlen($texto) < 1) {
+            $this->errores['texto'] = 'El comentario no puede estar vacio';
+        }
         if ( mb_strlen($texto) > 255) {
-            $this->errores['texto'] = 'El comentario no puede superar los 255 caracteres';
+            $this->errores['texto'] .= 'El comentario no puede superar los 255 caracteres';
         }
 
         if (count($this->errores) === 0) {

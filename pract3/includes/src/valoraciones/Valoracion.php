@@ -24,10 +24,37 @@ class Valoracion{
                 $comentario = new Valoracion(
                     $fila['idUsuario'],
                     $fila['idPelicula'],
+                    $fila['valoracion'],
                     $fila['texto'],
-                    $fila['idPadre'],
                     $fila['fechaCreacion'],
-                    $fila['id']
+                );
+                $result[] = $comentario;
+            }
+            $rs->free();
+        }
+        else {
+            error_log("Error BD ({$conn->errno}): {$conn->error}");
+        }
+        return $result;
+    }
+
+    
+    public static function devolverPorIdPeliculaPaginado($idPelicula, $numPagina){
+        $limit = 5;
+        $offset = $numPagina*$limit;
+        $limit += 1;
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("SELECT * FROM valoraciones WHERE idPelicula=%d AND texto IS NOT NULL LIMIT %d OFFSET %d", $idPelicula, $limit, $offset);
+        $rs = $conn->query($query);
+        $result = [];
+        if($rs){
+            while($fila = $rs->fetch_assoc()){
+                $comentario = new Valoracion(
+                    $fila['idUsuario'],
+                    $fila['idPelicula'],
+                    $fila['valoracion'],
+                    $fila['texto'],
+                    $fila['fechaCreacion'],
                 );
                 $result[] = $comentario;
             }
@@ -49,10 +76,9 @@ class Valoracion{
                 $comentario = new Valoracion(
                     $fila['idUsuario'],
                     $fila['idPelicula'],
+                    $fila['valoracion'],
                     $fila['texto'],
-                    $fila['idPadre'],
                     $fila['fechaCreacion'],
-                    $fila['id']
                 );
                 $result[] = $comentario;
             }
@@ -64,10 +90,10 @@ class Valoracion{
         return $result;
     }
 
-    public static function buscaPorIdPeliUsuario($idPelicula, $idUsuario )
+    public static function buscaPorUsuarioPeli($idUsuario, $idPelicula )
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM valoraciones WHERE idPelicula=%d AND idUsuario=%d", $idPelicula, $idUsuario);
+        $query = sprintf("SELECT * FROM valoraciones WHERE idUsuario=%d AND idPelicula=%d", $idUsuario , $idPelicula);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
@@ -86,7 +112,7 @@ class Valoracion{
     {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("INSERT INTO valoraciones(idUsuario, idPelicula, valoracion, texto, fechaCreacion) VALUES (%d, %d, %d, '%s', '%s')"
+        $query=sprintf("INSERT INTO valoraciones(idUsuario, idPelicula, valoracion, texto ) VALUES (%d, %d, %d, '%s')"
             , $valoracion->idUsuario
             , $valoracion->idPelicula
             , $valoracion->valoracion
