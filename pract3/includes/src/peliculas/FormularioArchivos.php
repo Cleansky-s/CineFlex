@@ -35,14 +35,14 @@ class FormularioArchivos extends Formulario {
 
         $htmlForm = <<<EOS
         $htmlErroresGlobales
-        <fieldset>
-            <div>
+        <fieldset class="formulario-pelicula">
+
             <label for="urlPortada">urlPortada:</label>
             <input type="file" name="urlPortada" accept="image/*"/>
             <img src="$rutaPortada" alt="No se puede mostrar la portada" width=180 height=200>
             {$erroresCampos['urlPortada']}
-            </div>
-            <div>
+
+
             <label for="urlTrailer">urlTrailer:</label>
             <input type="file" name="urlTrailer" accept="video/*"/>
             <video width="320" height="240" controls muted>
@@ -50,8 +50,7 @@ class FormularioArchivos extends Formulario {
             No se puede mostrar el trailer
             </video>
             {$erroresCampos['urlTrailer']}
-            </div>
-            <div>
+
             <label for="urlPelicula">urlPelicula:</label>
             <input type="file" name="urlPelicula" accept="video/*"/>
             <video width="320" height="240" controls>
@@ -59,7 +58,7 @@ class FormularioArchivos extends Formulario {
             No se puede mostrar la pelicula
             </video>
             {$erroresCampos['urlPelicula']}
-            </div>
+
             <a href="$urlAtributos">Volver a atributos</a>
             <input type="submit" value="Guardar" />
         </fieldset>

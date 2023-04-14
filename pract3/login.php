@@ -10,9 +10,10 @@ $linkRegister = $app->buildUrl('/register.php');
 
 $tituloPagina = 'Login';
 $contenidoPrincipal=<<<EOF
-  	<h1>Acceso al sistema</h1>
+    <div class="centerer">
     $formLogin
     <p>No tienes cuenta? <a href="{$linkRegister}">Registrate</a></p>
+    </div>
 EOF;
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];

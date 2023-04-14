@@ -36,18 +36,17 @@ class FormularioUpdatePelicula extends Formulario {
         $htmlForm = <<<EOS
         $htmlErroresGlobales
         <input type="hidden" name="idProveedor" value="{$idProveedor} "/>
-        <fieldset>
-            <div>
+        <fieldset class="formulario-pelicula">
+
                 <label for="titulo">titulo:</label>
                 <input type="text" name="titulo" required value="{$titulo}"/>
                 {$erroresCampos['titulo']}
-            </div>
-            <div>
+
+
                 <label for="descripcion">descripcion:</label>
                 <textarea name="descripcion" rows=10 columns=100 required >{$descripcion}</textarea>
                 {$erroresCampos['descripcion']}
-            </div>
-            <div>
+
             <label for="generos">generos:</label>
             <select name="generos[]" multiple required size = 14>
         EOS;
@@ -71,7 +70,7 @@ class FormularioUpdatePelicula extends Formulario {
         $htmlForm .= <<<EOS
                 </select>
                 {$erroresCampos['generos']}
-            </div>
+
             <div>
                 <label for="precioCompra">precioCompra:</label>
                 <input type="number" step="0.01" max=99.99 min=0 name="precioCompra" value="{$precioCompra}" required/>

@@ -21,26 +21,22 @@ class FormularioRegistro extends Formulario
 
         $html = <<<EOF
         $htmlErroresGlobales
-        <fieldset>
-            <legend>Datos para el registro</legend>
+        <fieldset class="formulario-login">
+            <h2>Registro</h2>
             <div>
-                <label for="nombreUsuario">Nombre de usuario:</label>
-                <input id="nombreUsuario" type="text" name="nombreUsuario" value="$nombreUsuario" />
+                <input id="nombreUsuario" placeholder="Nombre de usuario" type="text" name="nombreUsuario" value="$nombreUsuario" />
                 {$erroresCampos['nombreUsuario']}
             </div>
             <div>
-                <label for="nombre">Nombre:</label>
-                <input id="nombre" type="text" name="nombre" value="$nombre" />
+                <input id="nombre" type="text" placeholder="Nombre" name="nombre" value="$nombre" />
                 {$erroresCampos['nombre']}
             </div>
             <div>
-                <label for="password">Password:</label>
-                <input id="password" type="password" name="password" />
+                <input id="password" placeholder="Contraseña" type="password" name="password" />
                 {$erroresCampos['password']}
             </div>
             <div>
-                <label for="password2">Reintroduce el password:</label>
-                <input id="password2" type="password" name="password2" />
+                <input id="password2" placeholder="Repite contraseña" type="password" name="password2" />
                 {$erroresCampos['password2']}
             </div>
             <div>

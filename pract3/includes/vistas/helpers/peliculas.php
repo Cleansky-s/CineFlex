@@ -75,10 +75,12 @@ function detallesPelicula($pelicula){
     <div class="info-peli">
     <h1>{$pelicula->getTitulo()}</h1>
     <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
+    <p>Valoracion media: {$pelicula->valoracionMedia} con un total de {$pelicula->valoracionCuenta} valoraciones</p>
     <p>{$pelicula->descripcion}</p>
+    <div class="info-generos">
     <p>Generos: {$pelicula->generosToString()}</p>
     <p>Fecha de salida: {$pelicula->fechaCreacion}</p>
-    <p>Valoracion media: {$pelicula->valoracionMedia} con un total de {$pelicula->valoracionCuenta} valoraciones</p>
+    </div>
     EOS;
 
     if($pelicula->visible){

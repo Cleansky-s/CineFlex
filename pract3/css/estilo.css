@@ -1,24 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+:root {
+	--primary: #191919;
+	--secondary: #2D4263;
+	--accent: #C84B31;
+	--accent2: #ECDBBA;
+	--text-color: #f8f8f8;
+}
+
 * {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
+	color: var(--text-color)
 }
 
 body {
-	background-color: lightgray;
+	background-color: var(--primary);
+	font-family: "Poppins";
 }
 
+
+ 
 main {
 	padding: 10px 2%;
 	background-color: transparent;
 }
 
+button {
+	background-color: transparent;
+	color: var(--accent);
+	padding: 10px;
+	border: 2px solid var(--accent);
+	font-weight: bold;
+	cursor: pointer;
+	border-radius: 4px;
+}
+
+
 header {
-	background-image: linear-gradient(#1b1b1b, #3a3a3a);
+	background-image: linear-gradient(var(--secondary), var(--primary));
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	padding: 10px 0px;
+}
+
+.error{
+	color: var(--accent2);
+	font-size: 90%;
 }
 
 nav {
@@ -33,9 +63,8 @@ nav {
 nav li, nav a {
 	font-weight: 400;
 	font-size: 20px;
-	color: white;
+	color: var(--text-color);
 	text-decoration: none;
- 
 }
 
 nav a {
@@ -56,15 +85,108 @@ img {
 	list-style: none;
 }
 
+input, textarea {
+	background-color: transparent;
+	border: 1px solid var(--accent);
+	border-radius: 4px;
+	padding: 4px 6px;
+}
+
+select {
+	background: transparent;
+	overflow: hidden;
+	border: 1px solid var(--accent);
+	border-radius: 4px;
+	padding: 10px;
+}
+
+option {
+	font-size: medium;
+}
+
+.centerer {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.formulario-pelicula img {
+	height: 400px;
+	width: auto;
+}
+
+.formulario-login, .formulario-register, .formulario-pelicula {
+	padding: 30px;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	border-radius: 20px;
+	border: 2px solid var(--accent);
+	gap: 10px;
+}
+
+.formulario-login input, .formulario-register input {
+	background-color: transparent;
+	font-size: large;
+	border: none;
+	border-radius: 0;
+	border-bottom: 1px solid var(--accent);
+	padding: 4px 6px;
+}
+
+.formulario-login input:focus {
+	outline: none;
+	background: #ECDBBA22;
+}
+
+.seccion-valoraciones {
+	width: 400px;
+	margin-bottom: 30px;
+}
+
+.valoracion, .seccion-comentarios {
+	margin: 10px 0;
+}
+
+.comentarios-respuesta li {
+	margin-left: 40px;
+}
+
+
+.seccion-comentarios {
+	width: 400px;
+}
+
+
+
+.seccion-comentarios ul, .seccion-comentarios li {
+	list-style-type: none;
+}
+
 .deshabilitado {
 	pointer-events: none;
 	text-decoration: none;
 	cursor: default;
 }
 
+.info-peli {
+	margin-bottom: 30px;
+}
+
+.info-generos{
+	display:flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
 .nav-profile li{
 	display: inline-block;
 	padding: 0rem 0.6rem;
+}
+
+#formLogout {
+	width: fit-content;
 }
 
 .nav-links li {
@@ -129,7 +251,7 @@ form div img {
 
 .portada-peli img {
 	filter: brightness(80%);
-	border: 0px solid white;
+	border: 0px solid var(--accent);
 	transition: 0.6s cubic-bezier(.12,.97,.72,1);
 }
 

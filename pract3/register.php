@@ -9,9 +9,10 @@ $linkLogin = $app->buildUrl('/login.php');
 
 $tituloPagina = 'Registro';
 $contenidoPrincipal=<<<EOF
-  	<h1>Registro de usuario</h1>
+<div class="centerer">
     $formRegistro
     <p>Tienes cuenta? <a href="{$linkLogin}">Logeate</a></p>
+</div>
 EOF;
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];

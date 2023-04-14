@@ -26,7 +26,7 @@ function seccionValoraciones($idPelicula, $numPagina=1, $numPaginaComentarios=1)
     }
 
     $html = <<<EOS
-    <div id="comentarios" class="seccion-comentarios">
+    <div id="valoraciones" class="seccion-valoraciones">
     <h2>Valoraciones</h2>
     $htmlForm
     EOS;
@@ -42,7 +42,7 @@ function muestraValoracion($valoracion) {
     $usuario = Usuario::buscaPorId($valoracion->idUsuario);
 
     return <<<EOS
-        <div class="comentario">
+        <div class="valoracion">
             <h3>{$usuario->nombreUsuario} {$valoracion->valoracion} estrellas</h3>
             <p>{$valoracion->texto}</p>
     EOS;
