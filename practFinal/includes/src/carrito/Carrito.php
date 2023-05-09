@@ -4,15 +4,38 @@ namespace es\ucm\fdi\aw\comentarios;
 
 use es\ucm\fdi\aw\Aplicacion;
 use es\ucm\fdi\aw\MagicProperties;
+use es\ucm\fdi\aw\peliculas\Pelicula;
 
 class Carrito{
     use MagicProperties;
 
-    public static function crea($idUsuario, $idPelicula) {
-        $carrito = new Carrito($idUsuario, $idPelicula);
+    public static function crea($idUsuario, $idPeliculas = [], $precioTotal) {
+        $carrito = new Carrito($idUsuario, $idPeliculas, $precioTotal);
         return $carrito->guarda();
     }
+
+    public static function devuelvePeliculas($idUsuario)
+    {
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("SELECT * FROM carrito WHERE id=%id", $idUsuario);
+        $rs = $conn->query($query);
+        $result = false;
+        if ($rs) {
+            $fila = $rs->fetch_assoc();
+            if ($fila) {
+                $result = new Carrito($fila['id'], $fila['idPeliculas'], $fila['precioTotal']);
+                foreach($result->idPeliculas as $pelicula){
+                    $peliculas[] = Pelicula::buscaPorId($pelicula);
+                    
+                }
+            }
+            
+        }
+        
+        return $peliculas;
+    }
     
+    // por modificar
     private static function inserta($carrito)
     {
         $result = false;
@@ -30,6 +53,7 @@ class Carrito{
         return $result;
     }
 
+    // por modificar
     private static function actualiza($carrito)
     {
         $result = false;
@@ -46,28 +70,34 @@ class Carrito{
         return $result;
     }
 
-    private static function borra($comentario)
+    private static function borraPorIdPelicula($carrito, $idPelicula)
     {
-        return self::borraPorId($comentario->id);
-    }
-
-    private static function borraPorId($idComentario)
-    {
-        if (!$idComentario) {
+        if (!$idPelicula) {
             return false;
         } 
-        /* Los roles se borran en cascada por la FK
-         * $result = self::borraRoles($usuario) !== false;
-         */
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("DELETE FROM comentarios WHERE id = %d"
-            , $idComentario
+        $query = sprintf("DELETE FROM carrito WHERE id = %d AND idPeliculas = %d"
+            , $carrito->idUsuario
+            , $idPelicula
         );
         if ( ! $conn->query($query) ) {
             error_log("Error BD ({$conn->errno}): {$conn->error}");
             return false;
         }
         return true;
+    }
+
+    private $idUsuario;
+
+    private $idPeliculas;
+
+    private $precioTotal;
+
+    private function __construct($idUsuario, $idPeliculas = [], $precioTotal)
+    {
+        $this->idUsuario = $idUsuario;
+        $this->idPeliculas = $idPeliculas;
+        $this->precioTotal = $precioTotal;
     }
 
     
