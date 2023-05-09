@@ -5,8 +5,8 @@
  */
 define('BD_HOST', 'localhost');
 define('BD_NAME', 'cineflex');
-define('BD_USER', 'cineflex');
-define('BD_PASS', 'cineflex');
+define('BD_USER', 'root');
+define('BD_PASS', '');
 
 /**
  * Parámetros de configuración utilizados para generar las URLs y las rutas a ficheros en la aplicación

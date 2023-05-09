@@ -13,6 +13,32 @@ function listCines() {
 
     return $html;
 }
+function geocodeAddress($address) {
+    $accessToken = 'pk.eyJ1IjoiY2xlYW5za3kxIiwiYSI6ImNsaGdtZ3I0MjAyM2kzZXJ6NXFpdWo4a3cifQ.8yFg-lyDUMVs9KqajQ5qDA';
+
+    $url = 'https://api.mapbox.com/geocoding/v5/mapbox.places/' . urlencode($address) . '.json?access_token=' . $accessToken;
+    $json = file_get_contents($url);
+    $data = json_decode($json, true);
+    $coordinates = $data['features'][0]['center'];
+    return $coordinates;
+}
+
+function createMap() {
+    $markers = Cine::devuelveCine();
+    $accessToken = 'pk.eyJ1IjoiY2xlYW5za3kxIiwiYSI6ImNsaGdtZ3I0MjAyM2kzZXJ6NXFpdWo4a3cifQ.8yFg-lyDUMVs9KqajQ5qDA';
+    $mapHtml = file_get_contents(__DIR__.'/map.php');
+    foreach($markers as $marker) {
+        $coordinates = geocodeAddress($marker->getDireccion(), $accessToken);
+        $markerHtml = '<script>const marker' . $marker->getId() . ' = new mapboxgl.Marker()';
+        $markerHtml .= '.setLngLat([' . $coordinates[0] . ', ' . $coordinates[1] . '])';
+        $markerHtml .= '.setPopup(new mapboxgl.Popup().setHTML("' . $marker->getNombre() . '"))';
+        $markerHtml .= '.setPopup(new mapboxgl.Popup({className: "marker-popup"}).setHTML("' . $marker->getNombre() . '"))';
+        $markerHtml .= '.addTo(map);</script>';
+        $mapHtml .= $markerHtml;
+    }
+    return $mapHtml;
+}
+
 
 function listaFilaCine($cines) {
     $html = "<div class='row-cines'><div class='scroll-cines'>";
@@ -22,6 +48,7 @@ function listaFilaCine($cines) {
     $html .="</div></div>";
     return $html;
 }
+
 
 function botonEditarCine($id) {
     $app = Aplicacion::getInstance();
@@ -53,38 +80,44 @@ function listaPeliculasDeProveedor($idProveedor)
     return $html;
 }
 
+
+/*
+function portadaPelicula($pelicula)
+{
+    $linkInfoPeli = Utils::buildUrl('infoPelicula.php', [ 'id' => $pelicula->id ]);
+    $rutaPortada = Utils::buildUrl("almacen/portadas/{$pelicula->urlPortada}");
+    $html = <<<EOS
+    <div class="portada-peli">
+    <a href="{$linkInfoPeli}"><img src="{$rutaPortada}" alt="{$pelicula->titulo}" /></a>
+    </div>
+    EOS;
+    return $html;
+}
+*/
 function portadaCine($cines)
 {
     $app = Aplicacion::getInstance();
+    $linkInfoCine =  $app->buildUrl('infoCines.php', [ 'id' => $cines->id ]);
     $html = <<<EOS
     <div class="portada-cine">
+     <a href="{$linkInfoCine}">$cines->nombre</a>
     </div>
     EOS;
     return $html;
 }
 
-function detallesPelicula($pelicula){
-    // a hacer
+function detallesCines($cines){
     $app = Aplicacion::getInstance();
-    $rutaPortada = $app->buildUrl("almacen/portadas/{$pelicula->urlPortada}");
     $html = <<<EOS
-    <div class="info-peli">
-    <h1>{$pelicula->getTitulo()}</h1>
-    <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
-    <p>Valoracion media: {$pelicula->valoracionMedia} con un total de {$pelicula->valoracionCuenta} valoraciones</p>
-    <p>{$pelicula->descripcion}</p>
-    <div class="info-generos">
-    <p>Generos: {$pelicula->generosToString()}</p>
-    <p>Fecha de salida: {$pelicula->fechaCreacion}</p>
+    <div class="info-cines">
+    <h1>{$cines->getNombre()}</h1>
+    <p>Direccion: {$cines->getDireccion()}</p>
     </div>
     EOS;
-        
-
-    $html .= "</div>";
     return $html;
 }
 
-function botonAnadirPelicula()
+function botonAnadirCines()
 {
     $app = Aplicacion::getInstance();
     $urlAnadir = $app->buildUrl('/peliculas/editarPelicula.php');

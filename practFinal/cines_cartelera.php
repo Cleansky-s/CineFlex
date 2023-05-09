@@ -8,6 +8,7 @@ $tituloPagina = 'Portada';
 $contenidoPrincipal="<h1>Lista de todas las cines</h1>";
 
 $contenidoPrincipal .= listCines();
+$contenidoPrincipal .= createMap();
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];
 $app->generaVista('/plantillas/plantilla.php', $params);

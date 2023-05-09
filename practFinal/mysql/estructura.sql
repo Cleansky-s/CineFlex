@@ -161,6 +161,22 @@ CREATE TABLE `valoraciones` (
   `texto` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cines`
+--
+
+CREATE TABLE `cines` (
+`id` int(11) NOT NULL,
+`direccion` varchar(50) NOT NULL,
+`idProveedor` int(11) NOT NULL,
+`nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+
 --
 -- Disparadores `valoraciones`
 --
@@ -252,6 +268,13 @@ ALTER TABLE `valoraciones`
   ADD PRIMARY KEY (`idUsuario`,`idPelicula`),
   ADD KEY `Valoraciones_Id_pelicula` (`idPelicula`);
 
+
+--
+-- Indices de la tabla `cines`
+--
+
+ALTER TABLE `cines`
+    ADD PRIMARY KEY (`id`);
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
@@ -298,6 +321,12 @@ ALTER TABLE `roles`
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
+
+
+-- AUTO_INCREMENT de la tabla `cines`
+--
+ALTER TABLE `cines`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restricciones para tablas volcadas
 --

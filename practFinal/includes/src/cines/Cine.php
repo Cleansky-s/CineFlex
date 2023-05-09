@@ -8,16 +8,14 @@ use es\ucm\fdi\aw\MagicProperties;
 class Cine {
 
     use MagicProperties;
-
-    
     public static function crea(
         $id,
         $nombre,
         $idProveedor,
         $direccion)
     {
-        $pelicula = new Cine($id,$nombre,$idProveedor,$direccion);
-        return $pelicula->guarda();
+        $cine = new Cine($id,$nombre,$idProveedor,$direccion);
+        return $cine->guarda();
     }
 
     public static function devuelveCine()
@@ -30,8 +28,8 @@ class Cine {
             while ($fila = $rs->fetch_assoc()) {
                 $cine = new Cine(
                     $fila['id'],
-                    $fila['idProveedor'],
                     $fila['nombre'],
+                    $fila['idProveedor'],
                     $fila['direccion']
                 );
                 $result[] = $cine;
@@ -43,7 +41,11 @@ class Cine {
 
 
     /**
-     * Buscar por id
+     *
+    $id,
+    $nombre,
+    $idProveedor,
+    $direccion
      */
     public static function buscaPorId($idPelicula)
     {
@@ -54,11 +56,10 @@ class Cine {
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                $generos = [];
                 $result = new Cine(
                     $fila['id'],
-                    $fila['idProveedor'],
                     $fila['nombre'],
+                    $fila['idProveedor'],
                     $fila['direccion']
                 );
             }
@@ -121,7 +122,6 @@ class Cine {
             , !is_null($cines->idProveedor) ? $cines->idProveedor : 'null'
             , $conn->real_escape_string($cines->nombre)
             , $conn->real_escape_string($cines->direccion)
-            , $conn->real_escape_string($cines->urlPortada)
             , $cines->id
         );
         if ( $conn->query($query) ) {
