@@ -29,7 +29,6 @@ else {
 
     $htmlForm = new \es\ucm\fdi\aw\cines\FormularioUpdateCines();
 
-
 }
 
 $htmlForm = $htmlForm->gestiona();
