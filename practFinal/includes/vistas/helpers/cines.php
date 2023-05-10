@@ -120,10 +120,10 @@ function detallesCines($cines){
 function botonAnadirCines()
 {
     $app = Aplicacion::getInstance();
-    $urlAnadir = $app->buildUrl('/cines/editarCines.php');
+    $urlAnadir = $app->buildUrl('/peliculas/editarPelicula.php');
     $htmlButtonForm = <<<EOS
     <form action="{$urlAnadir}" method="POST">
-        <input type="submit" value="Añadir Cines" />
+        <input type="submit" value="Añadir Pelicula" />
     </form>
     EOS;
     return $htmlButtonForm;

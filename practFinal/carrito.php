@@ -1,13 +1,32 @@
 <?php
+use es\ucm\fdi\aw\Aplicacion;
+use es\ucm\fdi\aw\carrito\Carrito;
 
 require_once __DIR__.'/includes/config.php';
+require_once __DIR__.'/includes/vistas/helpers/carrito.php';
 
-$tituloPagina = 'Portada';
+$tituloPagina = 'Carrito';
+
+$idPelicula = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
+$app = Aplicacion::getInstance();
+$carrito = Carrito::buscaPorIdCarrito($app->idUsuario());
+$peliculas = [];
+if(!$carrito){
+	$carrito = Carrito::crea($app->idUsuario(), $peliculas, 0);
+}
+
+if($idPelicula){
+	$peliculasCarrito= $carrito->idPeliculas;
+	$peliculasCarrito[] = $idPelicula;
+	$carrito->idPeliculas=$peliculasCarrito;
+	$carrito->guarda();
+}
 
 $contenidoPrincipal=<<<EOS
 <h1>Página del carrito</h1>
-	<p> Aquí estara el contenido del carrito. </p>
 EOS;
+
+$contenidoPrincipal .= listaPeliculasCarrito($app->idUsuario());
 
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];

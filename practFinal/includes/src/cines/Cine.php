@@ -9,12 +9,12 @@ class Cine {
 
     use MagicProperties;
     public static function crea(
+        $id,
         $nombre,
         $idProveedor,
-        $direccion,
-        $id = null)
+        $direccion)
     {
-        $cine = new Cine($nombre,$idProveedor,$direccion,$id);
+        $cine = new Cine($id,$nombre,$idProveedor,$direccion);
         return $cine->guarda();
     }
 
@@ -27,11 +27,10 @@ class Cine {
         if($rs) {
             while ($fila = $rs->fetch_assoc()) {
                 $cine = new Cine(
-                    
+                    $fila['id'],
                     $fila['nombre'],
                     $fila['idProveedor'],
-                    $fila['direccion'],
-                    $fila['id']
+                    $fila['direccion']
                 );
                 $result[] = $cine;
             }
@@ -48,20 +47,20 @@ class Cine {
     $idProveedor,
     $direccion
      */
-    public static function buscaPorId($idCine)
+    public static function buscaPorId($idPelicula)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM cines WHERE id=%d", $idCine);
+        $query = sprintf("SELECT * FROM cines WHERE id=%d", $idPelicula);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
                 $result = new Cine(
+                    $fila['id'],
                     $fila['nombre'],
                     $fila['idProveedor'],
-                    $fila['direccion'],
-                    $fila['id']
+                    $fila['direccion']
                 );
             }
             $rs->free();
@@ -102,10 +101,10 @@ class Cine {
         if($rs) {
             while ($fila = $rs->fetch_assoc()) {
                 $cine = new Cine(
+                    $fila['id'],
                     $fila['idProveedor'],
                     $fila['nombre'],
-                    $fila['direccion'],
-                    $fila['id']
+                    $fila['direccion']
                 );
 
                 $result[] = $cine;
@@ -153,6 +152,8 @@ class Cine {
 
     // Datos del objeto
 
+    private const DATE_FORMAT = 'Y-m-d';
+
     private $id;
 
     private $idProveedor;
@@ -170,10 +171,10 @@ class Cine {
     // private $directores;
 
     private function __construct(
+        $id,
         $nombre,
         $idProveedor,
-        $direccion,
-        $id=null,
+        $direccion
     ) {
         $this->id = $id;
         $this->idProveedor = $idProveedor;
@@ -182,7 +183,7 @@ class Cine {
     }
 
     public function getId() {
-        return $this->idCine;
+        return $this->id;
     }
     public function getIdProveedor() {
         return $this->idProveedor;

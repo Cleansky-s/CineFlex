@@ -91,6 +91,7 @@ function detallesPelicula($pelicula){
         }
         else {
             $html .= botonesCompra($pelicula);
+            $html .= botonAnadirCarrito($pelicula);
         }
     }
     else {
@@ -140,6 +141,7 @@ function botonesCompra($pelicula) {
     <div>
     <form id="compra" action="{$action}" method="GET">
         <label for="compra">Comprar</label>
+        <input type="hidden" name="id" value="{$pelicula->id}" />
         <input type="submit" for="compra" value="{$pelicula->precioCompra}" />
     </form>
     </div>
@@ -149,6 +151,7 @@ function botonesCompra($pelicula) {
     <div>
     <form id="alquiler" action="{$action}" method="GET">
         <label for="alquiler">Alquiler</label>
+        <input type="hidden" name="id" value="{$pelicula->id}" />
         <input type="submit" for="alquiler" value="{$pelicula->precioAlquiler}" />
     </form>
     </div>
@@ -158,6 +161,20 @@ function botonesCompra($pelicula) {
 
 function botonAlquiler($pelicula) {
     
+}
+
+function botonAnadirCarrito($pelicula){
+    $app = Aplicacion::getInstance();
+    $action = $app->buildUrl('/carrito.php', [ 'id' => $pelicula->id]);
+    $htmlButtonForm = <<<EOS
+    <div>
+    <form id="carrito" action="{$action}" method="GET">
+        <input type="submit" for="carrito" value="Añadir carrito" />
+        <input type="hidden" name="id" value="{$pelicula->id}" />
+    </form>
+    </div>
+    EOS;
+    return $htmlButtonForm;
 }
 
 function botonAnadirPelicula()
