@@ -16,7 +16,6 @@ if(!$carrito){
 }
 
 if($idPelicula){
-	$peliculasCarrito= $carrito->idPeliculas;
 	$peliculasCarrito[] = $idPelicula;
 	$carrito->idPeliculas=$peliculasCarrito;
 	$carrito->guarda();
@@ -26,7 +25,8 @@ $contenidoPrincipal=<<<EOS
 <h1>Página del carrito</h1>
 EOS;
 
-$contenidoPrincipal .= listaPeliculasCarrito($app->idUsuario());
+$contenidoPrincipal .= listaPeliculasCarrito($carrito);
+$contenidoPrincipal .= mostrarPrecio($carrito);
 
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];

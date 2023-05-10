@@ -165,7 +165,13 @@ function botonAlquiler($pelicula) {
 
 function botonAnadirCarrito($pelicula){
     $app = Aplicacion::getInstance();
-    $action = $app->buildUrl('/carrito.php', [ 'id' => $pelicula->id]);
+    $action=false;
+    if($app->usuarioLogueado()){
+        $action = $app->buildUrl('/carrito.php', [ 'id' => $pelicula->id]);
+    }
+    else{
+        $action = $app->buildUrl('/login.php');
+    }
     $htmlButtonForm = <<<EOS
     <div>
     <form id="carrito" action="{$action}" method="GET">

@@ -15,19 +15,22 @@ class Carrito{
         return $carrito;
     }
 
-    public static function devuelvePeliculasCarrito($idCarrito)
+    public static function devuelvePeliculasCarrito($carrito)
     {
         $result=[];
+        $precio = 0;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito = %d", $idCarrito);
+        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito = %d", $carrito->id);
         $rs = $conn->query($query);
         if ($rs) {
             $peliculas = $rs->fetch_all(MYSQLI_ASSOC);
             foreach($peliculas as $pelicula){
-                $result = Pelicula::buscaPorId($pelicula['idPelicula']);
-                
+                $aux = Pelicula::buscaPorId($pelicula['idPelicula']);
+                $result[] = $aux;
+                $precio += $aux->precioCompra;
             }
             $rs->free();
+            $carrito->precioTotal = $precio;
             return $result;
         }
         else{

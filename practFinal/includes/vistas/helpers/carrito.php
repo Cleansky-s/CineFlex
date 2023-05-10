@@ -3,14 +3,19 @@
 use \es\ucm\fdi\aw\Aplicacion;
 use \es\ucm\fdi\aw\carrito\Carrito;
 
-function listaPeliculasCarrito($idUsuario) {
-    $carro = Carrito::devuelvePeliculasCarrito($idUsuario);
-    if (count($carro) == 0) {
+function listaPeliculasCarrito($carrito) {
+    $listaPelis = Carrito::devuelvePeliculasCarrito($carrito);
+    if (count($listaPelis) == 0) {
         $html = '<p>Aun no hay peliculas añadidas</p>';
         return $html;
     }
-    $html = listaFilaPeliculas($carro);
+    $html = listaFilaPeliculas($listaPelis);
 
+    return $html;
+}
+
+function mostrarPrecio($carrito){
+    $html = "<h2> Precio en total: {$carrito->precioTotal}</h2>";
     return $html;
 }
 
