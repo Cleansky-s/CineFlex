@@ -1,9 +1,0 @@
-Funcionalidades de la aplicacion:
-
-Registro y login de usuarios.
-
-Modificacion de roles de usuarios (siendo admin).
-
-Creacion y edicion de peliculas (siendo proveedor).
-
-Visualizacion de todas las peliculas, junto con su informacion y sus respectivos archivos almacenados localmente.

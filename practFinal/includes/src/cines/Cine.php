@@ -182,7 +182,7 @@ class Cine {
     }
 
     public function getId() {
-        return $this->idCine;
+        return $this->id;
     }
     public function getIdProveedor() {
         return $this->idProveedor;
