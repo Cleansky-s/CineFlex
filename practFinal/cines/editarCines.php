@@ -11,28 +11,25 @@ if (! $app->tieneRol(es\ucm\fdi\aw\usuarios\Usuario::PROVEEDOR_ROLE)) {
     $app->paginaError(403, $tituloPagina, 'Acceso Denegado!', 'No tienes permisos suficientes para acceder a esta pagina.');
 }
 
-$idCines = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
-$archivos = filter_input(INPUT_GET, 'archivos', FILTER_SANITIZE_SPECIAL_CHARS);
+$idCine = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 
-if (!$idCines) {
-    $htmlForm = new \es\ucm\fdi\aw\peliculas\FormularioAddPelicula();
+if (!$idCine) {
+    $htmlForm = new \es\ucm\fdi\aw\cines\FormularioAddCine();
 }
 else {
 
-    $pelicula = es\ucm\fdi\aw\peliculas\Pelicula::buscaPorId($idPelicula);
-    if(!$pelicula){
-        $app->paginaError(403, $tituloPagina, 'Error', 'No existe pelicula con esa id.');
+    $cine = es\ucm\fdi\aw\cines\Cine::buscaPorId($idCine);
+    if(!$cine){
+        $app->paginaError(403, $tituloPagina, 'Error', 'No existe cine con esa id.');
     }
-    if($app->idUsuario() != $pelicula->idProveedor){
-        $app->paginaError(403, $tituloPagina, 'Acceso Denegado!', 'No eres el propietario de esta pelicula.');
+    if($app->idUsuario() != $cine->idProveedor){
+        $app->paginaError(403, $tituloPagina, 'Acceso Denegado!', 'No eres el propietario de este cine.');
     }
 
-    if (!$archivos) {
-        $htmlForm = new \es\ucm\fdi\aw\peliculas\FormularioUpdatePelicula();
-    }
-    else {
-        $htmlForm = new \es\ucm\fdi\aw\peliculas\FormularioArchivos();
-    }
+
+    $htmlForm = new \es\ucm\fdi\aw\cines\FormularioUpdateCines();
+
+
 }
 
 $htmlForm = $htmlForm->gestiona();

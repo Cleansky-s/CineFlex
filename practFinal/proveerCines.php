@@ -17,6 +17,8 @@ $contenidoPrincipal=<<<EOS
 EOS;
 
 $contenidoPrincipal .= botonAnadirCines();
+$contenidoPrincipal .= listaCinesDeProveedor($app->idUsuario());
+
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];
 $app->generaVista('/plantillas/plantilla.php', $params);

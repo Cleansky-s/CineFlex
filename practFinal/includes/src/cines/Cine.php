@@ -27,7 +27,7 @@ class Cine {
         if($rs) {
             while ($fila = $rs->fetch_assoc()) {
                 $cine = new Cine(
-                    
+
                     $fila['nombre'],
                     $fila['idProveedor'],
                     $fila['direccion'],
@@ -57,12 +57,14 @@ class Cine {
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                $result = new Cine(
+                $result =[];
+                $cine = new Cine(
                     $fila['nombre'],
                     $fila['idProveedor'],
                     $fila['direccion'],
                     $fila['id']
                 );
+                $result= $cine;
             }
             $rs->free();
         } else {
@@ -77,7 +79,7 @@ class Cine {
         $conn = Aplicacion::getInstance()->getConexionBd();
         // debido al collation que usamos no es necesario utilizar LOWER()
         $query = sprintf("SELECT * FROM cines WHERE nombre LIKE '%s'"
-        , $conn->real_escape_string($nombre));
+            , $conn->real_escape_string($nombre));
 
         $rs = $conn->query($query);
         $result = false;
@@ -133,9 +135,9 @@ class Cine {
         return $result;
     }
 
-    
+
     private static function inserta($cines)
-    {  
+    {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
         $query=sprintf("INSERT INTO cines(idProveedor, nombre, direccion) VALUES (%d, '%s', '%s' )"
@@ -158,7 +160,7 @@ class Cine {
     private $idProveedor;
 
     private $nombre;
-    
+
     private $direccion;
 
 
@@ -209,7 +211,7 @@ class Cine {
 
         $this->idProveedor = $idProveedor;
     }
-    
+
     public function guarda()
     {
         if ($this->id != null) {
