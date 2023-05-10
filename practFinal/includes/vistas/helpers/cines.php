@@ -52,17 +52,17 @@ function listaFilaCine($cines) {
 
 function botonEditarCine($id) {
     $app = Aplicacion::getInstance();
-    $editaURL = $app->buildUrl('peliculas/editarPelicula.php', [
+    $editaURL = $app->buildUrl('cines/editarCines.php', [
         'id' => $id
     ]);
     return <<<EOS
-    <a href="{$editaURL}">Editar Pelicula</a>
+    <a href="{$editaURL}">Editar Cine</a>
     EOS;
 }
 
-function listaPeliculasDeProveedor($idProveedor)
+function listaCinesDeProveedor($idProveedor)
 {
-    $cines = Cine::buscaPorIdProveedor($idProveedor);
+    $cines = Cine::devuelveCine($idProveedor);
     $html = "<h3>Lista de cines pertenecientes al proveedor</h3>";
 
     if (count($cines) == 0) {
@@ -78,6 +78,7 @@ function listaPeliculasDeProveedor($idProveedor)
     $html .="</div>";
 
     return $html;
+
 }
 
 
@@ -120,10 +121,10 @@ function detallesCines($cines){
 function botonAnadirCines()
 {
     $app = Aplicacion::getInstance();
-    $urlAnadir = $app->buildUrl('/peliculas/editarPelicula.php');
+    $urlAnadir = $app->buildUrl('/cines/editarCines.php');
     $htmlButtonForm = <<<EOS
     <form action="{$urlAnadir}" method="POST">
-        <input type="submit" value="Añadir Pelicula" />
+        <input type="submit" value="Añadir Cines" />
     </form>
     EOS;
     return $htmlButtonForm;

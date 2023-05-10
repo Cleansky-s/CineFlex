@@ -9,12 +9,12 @@ class Cine {
 
     use MagicProperties;
     public static function crea(
-        $id,
         $nombre,
         $idProveedor,
-        $direccion)
+        $direccion,
+        $id = null)
     {
-        $cine = new Cine($id,$nombre,$idProveedor,$direccion);
+        $cine = new Cine($nombre,$idProveedor,$direccion,$id);
         return $cine->guarda();
     }
 
@@ -27,10 +27,11 @@ class Cine {
         if($rs) {
             while ($fila = $rs->fetch_assoc()) {
                 $cine = new Cine(
-                    $fila['id'],
+
                     $fila['nombre'],
                     $fila['idProveedor'],
-                    $fila['direccion']
+                    $fila['direccion'],
+                    $fila['id']
                 );
                 $result[] = $cine;
             }
@@ -47,21 +48,23 @@ class Cine {
     $idProveedor,
     $direccion
      */
-    public static function buscaPorId($idPelicula)
+    public static function buscaPorId($idCine)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM cines WHERE id=%d", $idPelicula);
+        $query = sprintf("SELECT * FROM cines WHERE id=%d", $idCine);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                $result = new Cine(
-                    $fila['id'],
+                $result =[];
+                $cine = new Cine(
                     $fila['nombre'],
                     $fila['idProveedor'],
-                    $fila['direccion']
+                    $fila['direccion'],
+                    $fila['id']
                 );
+                $result= $cine;
             }
             $rs->free();
         } else {
@@ -76,7 +79,7 @@ class Cine {
         $conn = Aplicacion::getInstance()->getConexionBd();
         // debido al collation que usamos no es necesario utilizar LOWER()
         $query = sprintf("SELECT * FROM cines WHERE nombre LIKE '%s'"
-        , $conn->real_escape_string($nombre));
+            , $conn->real_escape_string($nombre));
 
         $rs = $conn->query($query);
         $result = false;
@@ -101,10 +104,10 @@ class Cine {
         if($rs) {
             while ($fila = $rs->fetch_assoc()) {
                 $cine = new Cine(
-                    $fila['id'],
                     $fila['idProveedor'],
                     $fila['nombre'],
-                    $fila['direccion']
+                    $fila['direccion'],
+                    $fila['id']
                 );
 
                 $result[] = $cine;
@@ -132,9 +135,9 @@ class Cine {
         return $result;
     }
 
-    
+
     private static function inserta($cines)
-    {  
+    {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
         $query=sprintf("INSERT INTO cines(idProveedor, nombre, direccion) VALUES (%d, '%s', '%s' )"
@@ -152,14 +155,12 @@ class Cine {
 
     // Datos del objeto
 
-    private const DATE_FORMAT = 'Y-m-d';
-
     private $id;
 
     private $idProveedor;
 
     private $nombre;
-    
+
     private $direccion;
 
 
@@ -171,10 +172,10 @@ class Cine {
     // private $directores;
 
     private function __construct(
-        $id,
         $nombre,
         $idProveedor,
-        $direccion
+        $direccion,
+        $id=null,
     ) {
         $this->id = $id;
         $this->idProveedor = $idProveedor;
@@ -210,7 +211,7 @@ class Cine {
 
         $this->idProveedor = $idProveedor;
     }
-    
+
     public function guarda()
     {
         if ($this->id != null) {
