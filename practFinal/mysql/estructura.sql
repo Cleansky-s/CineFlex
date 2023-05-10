@@ -3,12 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-05-2023 a las 15:54:49
+-- Tiempo de generación: 14-04-2023 a las 16:22:12
 -- Versión del servidor: 10.4.27-MariaDB
 -- Versión de PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -35,55 +34,6 @@ CREATE TABLE `alquiler` (
   `precio` decimal(4,2) NOT NULL,
   `fechaMax` datetime NOT NULL,
   `activo` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `carrito`
---
-
-CREATE TABLE `carrito` (
-  `id` int(11) NOT NULL,
-  `precioTotal` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `carrito`
---
-
-INSERT INTO `carrito` (`id`, `precioTotal`) VALUES
-(2, '0.00');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `carritopelicula`
---
-
-CREATE TABLE `carritopelicula` (
-  `idCarrito` int(11) NOT NULL,
-  `idPelicula` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `carritopelicula`
---
-
-INSERT INTO `carritopelicula` (`idCarrito`, `idPelicula`) VALUES
-(2, 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cines`
---
-
-CREATE TABLE `cines` (
-  `id` int(11) NOT NULL,
-  `direccion` varchar(50) NOT NULL,
-  `idProveedor` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -128,26 +78,6 @@ CREATE TABLE `generos` (
   `nombre` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `generos`
---
-
-INSERT INTO `generos` (`id`, `nombre`) VALUES
-(1, 'action'),
-(2, 'adventure'),
-(3, 'animation'),
-(4, 'comedy'),
-(5, 'drama'),
-(6, 'fantasy'),
-(7, 'historical'),
-(8, 'horror'),
-(9, 'musical'),
-(10, 'noir'),
-(11, 'romance'),
-(12, 'science fiction'),
-(13, 'thriller'),
-(14, 'western');
-
 -- --------------------------------------------------------
 
 --
@@ -158,16 +88,6 @@ CREATE TABLE `generospelicula` (
   `id` int(11) NOT NULL,
   `genero` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `generospelicula`
---
-
-INSERT INTO `generospelicula` (`id`, `genero`) VALUES
-(0, 1),
-(0, 4),
-(1, 1),
-(1, 4);
 
 -- --------------------------------------------------------
 
@@ -193,13 +113,6 @@ CREATE TABLE `peliculas` (
   `fechaAnadir` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `peliculas`
---
-
-INSERT INTO `peliculas` (`id`, `idProveedor`, `titulo`, `descripcion`, `urlPortada`, `urlTrailer`, `urlPelicula`, `precioCompra`, `precioAlquiler`, `enSuscripcion`, `valoracionMedia`, `valoracionCuenta`, `fechaCreacion`, `visible`, `fechaAnadir`) VALUES
-(1, 2, 'CineFlex', 'ASsdasdasd', '1.png', 'tmp', 'tmp', '5.00', '4.00', 0, '0.0', 0, '2023-05-03', 1, '2023-05-10 12:51:02');
-
 -- --------------------------------------------------------
 
 --
@@ -211,16 +124,6 @@ CREATE TABLE `roles` (
   `nombre` varchar(15) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `roles`
---
-
-INSERT INTO `roles` (`id`, `nombre`) VALUES
-(1, 'admin'),
-(2, 'provider'),
-(3, 'moderator'),
-(4, 'user');
-
 -- --------------------------------------------------------
 
 --
@@ -231,16 +134,6 @@ CREATE TABLE `rolesusuario` (
   `usuario` int(11) NOT NULL,
   `rol` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `rolesusuario`
---
-
-INSERT INTO `rolesusuario` (`usuario`, `rol`) VALUES
-(1, 1),
-(1, 4),
-(2, 2),
-(2, 4);
 
 -- --------------------------------------------------------
 
@@ -255,14 +148,6 @@ CREATE TABLE `usuarios` (
   `nombre` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `nombreUsuario`, `password`, `nombre`) VALUES
-(1, 'admin', '$2y$10$O3c1kBFa2yDK5F47IUqusOJmIANjHP6EiPyke5dD18ldJEow.e0eS', 'Administrador'),
-(2, 'user', '$2y$10$uM6NtF.f6e.1Ffu2rMWYV.j.X8lhWq9l8PwJcs9/ioVKTGqink6DG', 'Usuario');
-
 -- --------------------------------------------------------
 
 --
@@ -275,6 +160,22 @@ CREATE TABLE `valoraciones` (
   `valoracion` tinyint(5) NOT NULL,
   `texto` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cines`
+--
+
+CREATE TABLE `cines` (
+`id` int(11) NOT NULL,
+`direccion` varchar(50) NOT NULL,
+`idProveedor` int(11) NOT NULL,
+`nombre` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 
 --
 -- Disparadores `valoraciones`
@@ -296,25 +197,6 @@ ALTER TABLE `alquiler`
   ADD KEY `idUsuario` (`idUsuario`),
   ADD KEY `idPelicula` (`idPelicula`),
   ADD KEY `fechaCompra` (`fechaCompra`);
-
---
--- Indices de la tabla `carrito`
---
-ALTER TABLE `carrito`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indices de la tabla `carritopelicula`
---
-ALTER TABLE `carritopelicula`
-  ADD PRIMARY KEY (`idCarrito`,`idPelicula`) USING BTREE,
-  ADD KEY `idPelicula` (`idPelicula`);
-
---
--- Indices de la tabla `cines`
---
-ALTER TABLE `cines`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `comentarios`
@@ -386,6 +268,13 @@ ALTER TABLE `valoraciones`
   ADD PRIMARY KEY (`idUsuario`,`idPelicula`),
   ADD KEY `Valoraciones_Id_pelicula` (`idPelicula`);
 
+
+--
+-- Indices de la tabla `cines`
+--
+
+ALTER TABLE `cines`
+    ADD PRIMARY KEY (`id`);
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
@@ -394,12 +283,6 @@ ALTER TABLE `valoraciones`
 -- AUTO_INCREMENT de la tabla `alquiler`
 --
 ALTER TABLE `alquiler`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `cines`
---
-ALTER TABLE `cines`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -418,26 +301,32 @@ ALTER TABLE `compras`
 -- AUTO_INCREMENT de la tabla `generos`
 --
 ALTER TABLE `generos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `peliculas`
 --
 ALTER TABLE `peliculas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
+
+
+-- AUTO_INCREMENT de la tabla `cines`
+--
+ALTER TABLE `cines`
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restricciones para tablas volcadas
 --
@@ -482,7 +371,6 @@ ALTER TABLE `rolesusuario`
 ALTER TABLE `valoraciones`
   ADD CONSTRAINT `Valoraciones_Id_pelicula` FOREIGN KEY (`idPelicula`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `Valoraciones_Id_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
