@@ -22,7 +22,7 @@ class FormularioAddCine extends Formulario {
         
 
         $htmlErroresGlobales = self::generaListaErroresGlobales($this->errores);
-        $erroresCampos = self::generaErroresCampos(['titulo', 'descripcion', 'generos', 'precioCompra', 'precioAlquiler', 'fechaCreacion'], $this->errores, 'span', array('class' => 'error'));
+        $erroresCampos = self::generaErroresCampos(['nombre', 'direccion', 'generos', 'precioCompra', 'precioAlquiler', 'fechaCreacion'], $this->errores, 'span', array('class' => 'error'));
 
         $htmlForm = <<<EOS
         $htmlErroresGlobales

@@ -238,6 +238,11 @@ select {
 	width: 200px;
 }
 
+.portada-elemento-carrito {
+	height: auto;
+	width: 100px;
+}
+
 form div img {
 	width: 200px;
 	height: auto;

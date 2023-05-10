@@ -4,40 +4,62 @@ namespace es\ucm\fdi\aw\compras;
 
 use es\ucm\fdi\aw\Aplicacion;
 use es\ucm\fdi\aw\MagicProperties;
+use es\ucm\fdi\aw\peliculas\Pelicula;
 
 class Compras{
     use MagicProperties;
 
-    public static function crea($idUsuario, $idPelicula,$precio, $fecha=null,$id=null)
+    public static function crea($idUsuario, $idPelicula, $precio, $fecha=null,$id=null)
     {
-        $user = new Compras($idUsuario,$idPelicula,$precio,$fecha , $id);
-        return $user->guarda();
+        $compra = new Compras($idUsuario,$idPelicula,$precio,$fecha , $id);
+        return $compra->guarda();
     }
 
-    public static function buscaPorId($idUsuario)
+    public static function buscaPorIdUsuarioPelicula($idUsuario, $idPelicula)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM Usuarios WHERE id=%d", $idUsuario);
+        $query = sprintf("SELECT * FROM compras WHERE idUsuario=%d AND idPelicula=%d", $idUsuario, $idPelicula);
         $rs = $conn->query($query);
-        $result = [];
+        $result = false;
         if ($rs) {
             $fila = $rs->fetch_assoc();
-            while ($fila = $rs->fetch_assoc()) {
-                $compras = new Compras(
+            if ($fila) {
+                $result = new Compras(
                     $fila['idUsuario'],
                     $fila['idPelicula'],
                     $fila['precio'],
                     $fila['fecha'],
                     $fila['id'],
                 );
-
-                $result[] = $compras;
             }
             $rs->free();
         } else {
             error_log("Error BD ({$conn->errno}): {$conn->error}");
         }
         return $result;
+    }
+
+    public static function devuelvePeliculasCompradas($idUsuario)
+    {
+        $result=[];
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("SELECT idPelicula FROM compras WHERE idUsuario = %d", $idUsuario);
+        $rs = $conn->query($query);
+        if ($rs) {
+            $peliculas = $rs->fetch_all(MYSQLI_ASSOC);
+            foreach($peliculas as $pelicula){
+                $aux = Pelicula::buscaPorId($pelicula['idPelicula']);
+                $result[] = $aux;
+            }
+            $rs->free();
+
+            return $result;
+        }
+        else{
+            error_log("Error delvuelve carrito ({$conn->errno}): {$conn->error}");
+        }
+        
+        return false;
     }
 
     private static function inserta($compras)
