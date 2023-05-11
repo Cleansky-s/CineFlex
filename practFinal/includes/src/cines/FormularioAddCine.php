@@ -44,7 +44,9 @@ class FormularioAddCine extends Formulario {
         // no es posible poner el input file en predeterminado a como lo tenia antes la pelicula...
 
         $htmlForm .= <<<EOS
-                
+        <input type="submit" value="Continuar" />
+            
+        </fieldset>
         EOS;
 
         return $htmlForm;
