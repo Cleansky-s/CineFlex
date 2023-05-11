@@ -34,25 +34,17 @@ class Carrito{
 
     public static function buscaPeliPorIdUsuario($idUsuario, $idPelicula)
     {
-        $result=[];
+        $result=false;
         $conn = Aplicacion::getInstance()->getConexionBd();
         $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito=%d AND idPelicula=%d", $idUsuario, $idPelicula);
         $rs = $conn->query($query);
         if ($rs) {
-            $peliculas = $rs->fetch_all(MYSQLI_ASSOC);
-            foreach($peliculas as $pelicula){
-                $aux = Pelicula::buscaPorId($pelicula['idPelicula']);
-                $result[] = $aux;
+            $fila = $rs->fetch_assoc();
+            if ($fila) {
+                $result = Pelicula::buscaPorId($fila['idPelicula']);
             }
-            $rs->free();
-
-            return $result;
         }
-        else{
-            error_log("Error delvuelve carrito ({$conn->errno}): {$conn->error}");
-        }
-        
-        return false;
+        return $result;
     }
 
     public static function precioCarrito($idUsuario)
