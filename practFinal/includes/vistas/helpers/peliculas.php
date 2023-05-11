@@ -77,7 +77,7 @@ function detallesPelicula($pelicula){
     $rutaTrailer = $app->buildUrl("almacen/trailers/{$pelicula->urlTrailer}");
     $html = <<<EOS
     <div class="info-peli">
-    <h1>{$pelicula->getTitulo()}</h1>
+    <h1>{$pelicula->titulo}</h1>
     <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
     <p>Valoracion media: {$pelicula->valoracionMedia} con un total de {$pelicula->valoracionCuenta} valoraciones</p>
     <p>{$pelicula->descripcion}</p>
@@ -89,6 +89,7 @@ function detallesPelicula($pelicula){
 
 
     $compradaPorUsuario = Compras::buscaPorIdUsuarioPelicula($idUsuario, $pelicula->id);
+    
 
     if($pelicula->visible && $idUsuario != ''){
         // Si una pelicula esta en suscripcion mostramos solo el boton de "Ver"

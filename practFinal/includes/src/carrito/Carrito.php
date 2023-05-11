@@ -36,7 +36,7 @@ class Carrito{
     {
         $result=[];
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito = %d", $idUsuario);
+        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito=%d AND idPelicula=%d", $idUsuario, $idPelicula);
         $rs = $conn->query($query);
         if ($rs) {
             $peliculas = $rs->fetch_all(MYSQLI_ASSOC);

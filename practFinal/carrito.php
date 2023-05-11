@@ -7,7 +7,6 @@ require_once __DIR__.'/includes/vistas/helpers/carrito.php';
 
 $tituloPagina = 'Carrito';
 
-$idPelicula = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $app = Aplicacion::getInstance();
 
 $contenidoPrincipal=<<<EOS

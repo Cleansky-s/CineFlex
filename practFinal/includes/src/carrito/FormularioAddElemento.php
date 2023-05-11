@@ -19,6 +19,7 @@ class FormularioAddElemento extends Formulario {
     {   
         
         $htmlForm = <<<EOS
+        <input type="hidden" name="idPelicula" value={$this->idPelicula}/>
         <input type="submit" value="Añadir al carrito" />
         EOS;
 
@@ -27,8 +28,9 @@ class FormularioAddElemento extends Formulario {
 
     protected function procesaFormulario(&$datos)
     {
+        $idPelicula = $datos['idPelicula'];
         $app = Aplicacion::getInstance();
         $idUsuario = $app->idUsuario();
-        Carrito::insertaAlCarrito($idUsuario, $this->idPelicula);
+        Carrito::insertaAlCarrito($idUsuario, $idPelicula);
     }
 }

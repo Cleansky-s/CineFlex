@@ -19,6 +19,7 @@ class FormularioEliminaElemento extends Formulario {
     {   
         
         $htmlForm = <<<EOS
+        <input type="hidden" name="idPelicula" value={$this->idPelicula}/>
         <input type="submit" value="Eliminar" />
         EOS;
 
@@ -27,8 +28,9 @@ class FormularioEliminaElemento extends Formulario {
 
     protected function procesaFormulario(&$datos)
     {
+        $idPelicula = $datos['idPelicula'];
         $app = Aplicacion::getInstance();
         $idUsuario = $app->idUsuario();
-        Carrito::eliminaDelCarrito($idUsuario, $this->idPelicula);
+        Carrito::eliminaDelCarrito($idUsuario, $idPelicula);
     }
 }
