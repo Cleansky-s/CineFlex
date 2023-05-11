@@ -8,7 +8,7 @@ $precio = $_POST['precio'];
 
 $tituloPagina = 'Compra de pelicula';
 
-$contenidoPrincipal="<h1>En desarrollo</h1>";
+$contenidoPrincipal="<h1>Página de compra</h1>";
 $contenidoPrincipal .= detallesCompra($idPelicula, $precio);
 
 $htmlForm = new es\ucm\fdi\aw\compras\FormularioAddCompra();

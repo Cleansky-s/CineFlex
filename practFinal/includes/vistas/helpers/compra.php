@@ -20,7 +20,7 @@ function visualizarElemento($idPelicula, $precio) {
 
     $html = <<<EOS
     <div class="elemento-compra">
-        <h4>Titulo:{$pelicula->titulo}</h4>
+        <h4>Titulo: {$pelicula->titulo}</h4>
         <p>Precio: {$precio}</p>
     </div>
     EOS;

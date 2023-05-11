@@ -34,24 +34,14 @@ class Carrito{
 
     public static function buscaPeliPorIdUsuario($idUsuario, $idPelicula)
     {
-        $result=[];
-        $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito = %d", $idUsuario);
-        $rs = $conn->query($query);
-        if ($rs) {
-            $peliculas = $rs->fetch_all(MYSQLI_ASSOC);
-            foreach($peliculas as $pelicula){
-                $aux = Pelicula::buscaPorId($pelicula['idPelicula']);
-                $result[] = $aux;
+        $listaPelis = Carrito::devuelvePeliculasCarrito($idUsuario);
+        if($listaPelis){
+            foreach($listaPelis as $peli){
+                if($peli->id==$idPelicula){
+                    return $peli;
+                }
             }
-            $rs->free();
-
-            return $result;
         }
-        else{
-            error_log("Error delvuelve carrito ({$conn->errno}): {$conn->error}");
-        }
-        
         return false;
     }
 

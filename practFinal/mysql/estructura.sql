@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 14-04-2023 a las 16:22:12
--- Versión del servidor: 10.4.27-MariaDB
--- Versión de PHP: 8.2.0
+-- Servidor: vm06.db.swarm.test
+-- Tiempo de generación: 11-05-2023 a las 12:40:03
+-- Versión del servidor: 10.9.5-MariaDB-1:10.9.5+maria~ubu2204
+-- Versión de PHP: 8.1.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -48,7 +49,7 @@ CREATE TABLE `comentarios` (
   `idPelicula` int(11) NOT NULL,
   `texto` varchar(255) NOT NULL,
   `idPadre` int(11) DEFAULT NULL,
-  `spoiler` tinyint(1) NOT NULL,
+  `spoiler` tinyint(1) DEFAULT NULL,
   `fechaCreacion` datetime NOT NULL DEFAULT current_timestamp(),
   `eliminado` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -161,22 +162,6 @@ CREATE TABLE `valoraciones` (
   `texto` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `cines`
---
-
-CREATE TABLE `cines` (
-`id` int(11) NOT NULL,
-`direccion` varchar(50) NOT NULL,
-`idProveedor` int(11) NOT NULL,
-`nombre` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-
-
 --
 -- Disparadores `valoraciones`
 --
@@ -268,13 +253,6 @@ ALTER TABLE `valoraciones`
   ADD PRIMARY KEY (`idUsuario`,`idPelicula`),
   ADD KEY `Valoraciones_Id_pelicula` (`idPelicula`);
 
-
---
--- Indices de la tabla `cines`
---
-
-ALTER TABLE `cines`
-    ADD PRIMARY KEY (`id`);
 --
 -- AUTO_INCREMENT de las tablas volcadas
 --
@@ -321,12 +299,6 @@ ALTER TABLE `roles`
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
-
-
--- AUTO_INCREMENT de la tabla `cines`
---
-ALTER TABLE `cines`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- Restricciones para tablas volcadas
 --
@@ -371,6 +343,7 @@ ALTER TABLE `rolesusuario`
 ALTER TABLE `valoraciones`
   ADD CONSTRAINT `Valoraciones_Id_pelicula` FOREIGN KEY (`idPelicula`) REFERENCES `peliculas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `Valoraciones_Id_usuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
