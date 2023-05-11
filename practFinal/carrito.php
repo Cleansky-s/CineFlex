@@ -7,26 +7,14 @@ require_once __DIR__.'/includes/vistas/helpers/carrito.php';
 
 $tituloPagina = 'Carrito';
 
-$idPelicula = filter_input(INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT);
 $app = Aplicacion::getInstance();
-$carrito = Carrito::buscaPorIdCarrito($app->idUsuario());
-$peliculas = [];
-if(!$carrito){
-	$carrito = Carrito::crea($app->idUsuario(), $peliculas, 0);
-}
-
-if($idPelicula){
-	$peliculasCarrito[] = $idPelicula;
-	$carrito->idPeliculas=$peliculasCarrito;
-	$carrito->guarda();
-}
 
 $contenidoPrincipal=<<<EOS
 <h1>Página del carrito</h1>
 EOS;
 
-$contenidoPrincipal .= listaPeliculasCarrito($carrito);
-$contenidoPrincipal .= mostrarPrecio($carrito);
+// dentro de la funcion esta la llamada al formulario de compra de carrito.
+$contenidoPrincipal .= listaPeliculasCarrito();
 
 
 $params = ['tituloPagina' => $tituloPagina, 'contenidoPrincipal' => $contenidoPrincipal];

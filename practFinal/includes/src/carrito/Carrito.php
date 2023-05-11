@@ -9,57 +9,92 @@ use es\ucm\fdi\aw\peliculas\Pelicula;
 class Carrito{
     use MagicProperties;
 
-    public static function crea($id, $idPeliculas = [], $precioTotal) {
-        $carrito = new Carrito($id, $idPeliculas, $precioTotal);
-        $carrito->guarda();
-        return $carrito;
-    }
-
-    public static function devuelvePeliculasCarrito($carrito)
+    public static function devuelvePeliculasCarrito($idUsuario)
     {
         $result=[];
-        $precio = 0;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito = %d", $carrito->id);
+        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito = %d", $idUsuario);
         $rs = $conn->query($query);
         if ($rs) {
             $peliculas = $rs->fetch_all(MYSQLI_ASSOC);
             foreach($peliculas as $pelicula){
                 $aux = Pelicula::buscaPorId($pelicula['idPelicula']);
                 $result[] = $aux;
-                $precio += $aux->precioCompra;
             }
             $rs->free();
-            $carrito->precioTotal = $precio;
+
             return $result;
         }
         else{
-            error_log("Error delvuelvecarrito ({$conn->errno}): {$conn->error}");
+            error_log("Error delvuelve carrito ({$conn->errno}): {$conn->error}");
         }
         
         return false;
     }
 
-    public static function buscaPorIdCarrito($idCarrito)
+    public static function buscaPeliPorIdUsuario($idUsuario, $idPelicula)
+    {
+        $result=false;
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("SELECT idPelicula FROM carritopelicula WHERE idCarrito=%d AND idPelicula=%d", $idUsuario, $idPelicula);
+        $rs = $conn->query($query);
+        if ($rs) {
+            $fila = $rs->fetch_assoc();
+            if ($fila) {
+                $result = Pelicula::buscaPorId($fila['idPelicula']);
+            }
+        }
+        return $result;
+    }
+
+    public static function precioCarrito($idUsuario)
     {
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("SELECT * FROM carrito WHERE id=%d", $idCarrito);
+        $query = sprintf("SELECT SUM(precioCompra) AS precioTotal FROM carritopelicula C LEFT JOIN peliculas P ON C.idPelicula=P.id WHERE C.idCarrito=%d", $idUsuario);
         $rs = $conn->query($query);
         $result = false;
         if ($rs) {
             $fila = $rs->fetch_assoc();
             if ($fila) {
-                $idPeliculas = [];
-                $result = new Carrito(
-                    $fila['id'],
-                    $idPeliculas,
-                    $fila['precioTotal']
-                );
-                $result->cargaCarritoPeliculas($result);
+                $result = $fila['precioTotal'];
             }
             $rs->free();
-        } else {
-            error_log("Error buscarporid ({$conn->errno}): {$conn->error}");
+        }
+        return $result;
+    }
+
+    public static function insertaAlCarrito($idUsuario, $idPelicula)
+    {
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("INSERT INTO carritopelicula (idCarrito, idPelicula) VALUES ( %d , %d )", $idUsuario, $idPelicula);
+        $rs = $conn->query($query);
+        $result = false;
+        if ($rs) {
+           $result = true;
+        }
+        return $result;
+    }
+
+    public static function eliminaDelCarrito($idUsuario, $idPelicula)
+    {
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("DELETE FROM carritopelicula WHERE idCarrito=%d AND idPelicula=%d", $idUsuario, $idPelicula);
+        $rs = $conn->query($query);
+        $result = false;
+        if ($rs) {
+           $result = true;
+        }
+        return $result;
+    }
+
+    public static function vaciarCarrito($idUsuario)
+    {
+        $conn = Aplicacion::getInstance()->getConexionBd();
+        $query = sprintf("DELETE FROM carritopelicula WHERE idCarrito=%d", $idUsuario);
+        $rs = $conn->query($query);
+        $result = false;
+        if ($rs) {
+           $result = true;
         }
         return $result;
     }
@@ -87,22 +122,6 @@ class Carrito{
         return false;
     }
     
-    private static function inserta($carrito)
-    {
-        $result = false;
-        $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("INSERT INTO carrito (id, precioTotal) VALUES ( %d, %d )"
-            , $carrito->id
-            , $carrito->precioTotal
-        );
-        if ( $conn->query($query) ) {
-            $result = true;
-        } else {
-            error_log("Error BD ({$conn->errno}): {$conn->error}");
-        }
-        return $result;
-    }
-
     private static function insertaPeliculas($carrito){
         if($carrito->idPeliculas){
             $conn = Aplicacion::getInstance()->getConexionBd();
@@ -118,55 +137,6 @@ class Carrito{
             }
         }
         return $carrito;
-    }
-
-    private static function actualiza($carrito)
-    {
-        $result = false;
-        $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("UPDATE carrito U SET precioTotal='%d' WHERE U.id=%d"
-            , $carrito->precioTotal
-            , $carrito->id
-        );
-        if ( $conn->query($query) ) {
-            $result = self::borraPeliculas($carrito);
-            if($result){
-                $result = self::insertaPeliculas($carrito);
-            }
-        } else {
-            error_log("Error BD ({$conn->errno}): {$conn->error}");
-        }
-        
-        return $result;
-    }
-
-    private static function borraPeliculas($carrito){
-        $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("DELETE FROM carritopelicula WHERE idCarrito = %d"
-            , $carrito->id
-        );
-        if ( ! $conn->query($query) ) {
-            error_log("Error borraPeliculasCarrito ({$conn->errno}): {$conn->error}");
-            return false;
-        }
-        return $carrito;
-    }
-
-    private static function borraPorIdPelicula($carrito, $idPelicula)
-    {
-        if (!$idPelicula) {
-            return false;
-        } 
-        $conn = Aplicacion::getInstance()->getConexionBd();
-        $query = sprintf("DELETE FROM carritopelicula WHERE idCarrito = %d AND idPelicula = %d"
-            , $carrito->id
-            , $idPelicula
-        );
-        if ( ! $conn->query($query) ) {
-            error_log("Error BD ({$conn->errno}): {$conn->error}");
-            return false;
-        }
-        return true;
     }
 
     private $id;
@@ -203,15 +173,6 @@ class Carrito{
     }
     public function setIdPeliculas($idPeliculas){
         $this->idPeliculas = $idPeliculas;
-    }
-    
-    public function guarda()
-    {
-        if (Carrito::buscaPorIdCarrito($this->id)) {
-            return self::actualiza($this);
-        }
-        return self::inserta($this);
-    }
-    
+    }    
 
 }

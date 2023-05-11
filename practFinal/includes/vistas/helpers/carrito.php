@@ -2,14 +2,27 @@
 
 use \es\ucm\fdi\aw\Aplicacion;
 use \es\ucm\fdi\aw\carrito\Carrito;
+use es\ucm\fdi\aw\carrito\FormularioEliminaElemento;
 
-function listaPeliculasCarrito($carrito) {
-    $listaPelis = Carrito::devuelvePeliculasCarrito($carrito);
+function listaPeliculasCarrito() {
+    $app = Aplicacion::getInstance();
+    $idUsuario = $app->idUsuario();
+    $listaPelis = Carrito::devuelvePeliculasCarrito($idUsuario);
+    $precioTotal = Carrito::precioCarrito($idUsuario);
     if (count($listaPelis) == 0) {
         $html = '<p>Aun no hay peliculas añadidas</p>';
         return $html;
     }
-    $html = listaFilaPeliculas($listaPelis);
+    $html = listaCarrito($listaPelis);
+
+    $htmlFormVaciar = new es\ucm\fdi\aw\carrito\FormularioVaciarCarrito();
+    $htmlFormVaciar = $htmlFormVaciar->gestiona();
+
+    $htmlFormCompra = new  es\ucm\fdi\aw\compras\FormularioCompraCarrito($precioTotal);
+    $htmlFormCompra = $htmlFormCompra->gestiona();
+
+    $html .= $htmlFormVaciar;
+    $html .= $htmlFormCompra;
 
     return $html;
 }
@@ -19,26 +32,36 @@ function mostrarPrecio($carrito){
     return $html;
 }
 
-function listaFilaPeliculas($peliculas) {
+function listaCarrito($peliculas) {
     $html = "<div class='row-pelis'><div class='scroll-pelis'>";
     foreach($peliculas as $pelicula) {
-        $html .= portadaPelicula($pelicula);
+        $html .= visualizaElemento($pelicula);
     }
     $html .="</div></div>";
     return $html;
 }
 
 
-function portadaPelicula($pelicula)
+function visualizaElemento($pelicula)
 {
     $app = Aplicacion::getInstance();
     $linkInfoPeli = $app->buildUrl('infoPelicula.php', [ 'id' => $pelicula->id ]);
     $rutaPortada = $app->buildUrl("almacen/portadas/{$pelicula->urlPortada}");
+    $htmlForm = new FormularioEliminaElemento($pelicula->id);
+    $htmlForm = $htmlForm->gestiona();
+
     $html = <<<EOS
-    <div class="portada-peli">
-    <a href="{$linkInfoPeli}"><img src="{$rutaPortada}" alt="{$pelicula->titulo}" /></a>
+    <div class="elemento-compra">
+        <div class="portada-elemento-carrito">
+        <a href="{$linkInfoPeli}"><img src="{$rutaPortada}" alt="{$pelicula->titulo}" /></a>
+        </div>
+        <h4>Titulo:{$pelicula->titulo}</h4>
+        <p>Precio: {$pelicula->precioCompra}</p>
+        $htmlForm
     </div>
     EOS;
+    return $html;
+    
     return $html;
 }
 

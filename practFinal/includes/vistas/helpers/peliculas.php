@@ -1,6 +1,9 @@
 <?php
 
 use \es\ucm\fdi\aw\Aplicacion;
+use es\ucm\fdi\aw\carrito\Carrito;
+use es\ucm\fdi\aw\carrito\FormularioAddElemento;
+use es\ucm\fdi\aw\compras\Compras;
 use \es\ucm\fdi\aw\peliculas\Pelicula;
 
 function listaPeliculas() {
@@ -69,11 +72,12 @@ function portadaPelicula($pelicula)
 function detallesPelicula($pelicula){
     // a hacer
     $app = Aplicacion::getInstance();
+    $idUsuario = $app->idUsuario();
     $rutaPortada = $app->buildUrl("almacen/portadas/{$pelicula->urlPortada}");
     $rutaTrailer = $app->buildUrl("almacen/trailers/{$pelicula->urlTrailer}");
     $html = <<<EOS
     <div class="info-peli">
-    <h1>{$pelicula->getTitulo()}</h1>
+    <h1>{$pelicula->titulo}</h1>
     <img class='portada-peli' src="{$rutaPortada}" alt="{$pelicula->titulo}" />
     <p>Valoracion media: {$pelicula->valoracionMedia} con un total de {$pelicula->valoracionCuenta} valoraciones</p>
     <p>{$pelicula->descripcion}</p>
@@ -83,16 +87,30 @@ function detallesPelicula($pelicula){
     </div>
     EOS;
 
-    if($pelicula->visible){
+
+    $compradaPorUsuario = Compras::buscaPorIdUsuarioPelicula($idUsuario, $pelicula->id);
+    
+
+    if($pelicula->visible && $idUsuario != ''){
         // Si una pelicula esta en suscripcion mostramos solo el boton de "Ver"
         // Si no, mostramos el boton de comprar y alquilar
-        if($pelicula->enSuscripcion){
+        if($pelicula->enSuscripcion || $compradaPorUsuario!=false){
             $html .= botonEnSuscripcion($pelicula->id);
         }
         else {
-            $html .= botonesCompra($pelicula);
-            $html .= botonAnadirCarrito($pelicula);
+            $enCarrito = Carrito::buscaPeliPorIdUsuario($idUsuario, $pelicula->id);
+            $html .= botonCompra($pelicula);
+            if(!$enCarrito){
+                $html .= botonAnadirCarrito($pelicula);
+            }
+            else {
+                $html .= "<p>Ya añadida al carrito</p>";
+            }
         }
+    }
+    else if ($idUsuario == '') {
+        $loginURL = $app->buildUrl('login.php');
+        $html .= "<a href={$loginURL}>Logeate para ver.</a>";
     }
     else {
         $html .= "<h4>Pelicula no disponible para ver</h4>";
@@ -134,52 +152,28 @@ function botonEnSuscripcion($id) {
     return $htmlButtonForm;
 }
 
-function botonesCompra($pelicula) {
+function botonCompra($pelicula) {
     $app = Aplicacion::getInstance();
-    $action = $app->buildUrl('/compras/comprar.php', [ 'id' => $pelicula->id]);
+    $action = $app->buildUrl('/compras/comprar.php');
     $htmlButtonForm = <<<EOS
     <div>
-    <form id="compra" action="{$action}" method="GET">
+    <form id="compra" action="{$action}" method="POST">
         <label for="compra">Comprar</label>
-        <input type="hidden" name="id" value="{$pelicula->id}" />
-        <input type="submit" for="compra" value="{$pelicula->precioCompra}" />
+        <input type="hidden" name="idPelicula" value="{$pelicula->id}" />
+        <input type="submit" name="precio" value="{$pelicula->precioCompra}" />
     </form>
     </div>
     EOS;
-    $action = $app->buildUrl('/compras/alquilar.php');
-    $htmlButtonForm .= <<<EOS
-    <div>
-    <form id="alquiler" action="{$action}" method="GET">
-        <label for="alquiler">Alquiler</label>
-        <input type="hidden" name="id" value="{$pelicula->id}" />
-        <input type="submit" for="alquiler" value="{$pelicula->precioAlquiler}" />
-    </form>
-    </div>
-    EOS;
+
     return $htmlButtonForm;
 }
 
-function botonAlquiler($pelicula) {
-    
-}
 
 function botonAnadirCarrito($pelicula){
-    $app = Aplicacion::getInstance();
-    $action=false;
-    if($app->usuarioLogueado()){
-        $action = $app->buildUrl('/carrito.php', [ 'id' => $pelicula->id]);
-    }
-    else{
-        $action = $app->buildUrl('/login.php');
-    }
-    $htmlButtonForm = <<<EOS
-    <div>
-    <form id="carrito" action="{$action}" method="GET">
-        <input type="submit" for="carrito" value="Añadir carrito" />
-        <input type="hidden" name="id" value="{$pelicula->id}" />
-    </form>
-    </div>
-    EOS;
+
+    $htmlButtonForm = new FormularioAddElemento($pelicula->id);
+    $htmlButtonForm = $htmlButtonForm->gestiona();
+
     return $htmlButtonForm;
 }
 

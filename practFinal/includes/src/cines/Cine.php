@@ -121,7 +121,7 @@ class Cine {
     {
         $result = false;
         $conn = Aplicacion::getInstance()->getConexionBd();
-        $query=sprintf("UPDATE peliculas SET idProveedor = %d , nombre = '%s' , direccion = '%s'  WHERE id = %d;"
+        $query=sprintf("UPDATE cines SET idProveedor = %d , nombre = '%s' , direccion = '%s'  WHERE id = %d;"
             , !is_null($cines->idProveedor) ? $cines->idProveedor : 'null'
             , $conn->real_escape_string($cines->nombre)
             , $conn->real_escape_string($cines->direccion)
